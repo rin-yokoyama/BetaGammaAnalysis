@@ -1,0 +1,21 @@
+SH13EventBuilderConfig:
+  TimeWindow: 1000.
+  PrintFrequency: 1000000
+
+  APV8008Loader:
+    TreeName: Tree
+    BranchName: test
+    FileNames:
+      - apvdata0060.root
+
+  APV8104Loader:
+    TreeName: APVTree
+    BranchName: APVMultiData
+    FileNames:
+      - data0002.root
+
+  APV8508Loader:
+    TreeName: APVTree
+    BranchName: APVMultiData
+    FileNames:
+      - data0002.root
