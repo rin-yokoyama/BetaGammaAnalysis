@@ -43,7 +43,7 @@ int main(int argc, char **argv)
 		}
 	}
 	APVDecodeManager manager(input_file_name, output_file_name);
-	manager.SetBlockSize(128000);
+	manager.SetBlockSize(128);
 	manager.Init("APV8104");
 	manager.Loop();
 

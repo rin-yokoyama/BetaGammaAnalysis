@@ -5,16 +5,17 @@ ROOT_GENERATE_DICTIONARY(G__APVData
 	APVSingleData.h
 	APVMultiData.h
 	SH13S2PlusData.h
-	TAPV8008Data.h
-	TDataObject.h
-	ITiming.h
-	ICharge.h
+	#TAPV8008Data.h
+	#TDataObject.h
+	#ITiming.h
+	#ICharge.h
+	#TArtemisObject.h
 	LINKDEF include/APVLinkDef.h)
 add_library( ${LIB_NAME} SHARED
 	G__APVData.cxx
 )
 
-target_link_libraries(${LIB_NAME} ${ROOT_LIBRARIES} oedo catcore)
+target_link_libraries(${LIB_NAME} ${ROOT_LIBRARIES} ${ARTLIBS})
 
 install(TARGETS ${LIB_NAME}
 		LIBRARY DESTINATION lib

@@ -15,10 +15,6 @@ public:
     TTreeEventLoaderBase(const YAML::Node &node, const std::string &name);
     virtual ~TTreeEventLoaderBase()
     {
-        if(chain_)
-        {
-            delete chain_;
-        }
     }
 
     virtual void Init(const YAML::Node &node);
@@ -26,45 +22,48 @@ public:
 
     /**
      * @brief virtual function to load timestamp of the current event
-     * 
+     *
      */
     virtual void LoadTS() {}
     /**
-     * @brief virtual function to load the next event
-     * 
-     * @return true 
-     * @return false 
+     * @brief pure virtual function to load the next event
+     *
+     * @return true
+     * @return false
      */
-    virtual bool GetNext(){}
+    virtual bool GetNext() = 0;
     virtual bool GetEoF() const { return eof_; }
     /**
      * @brief Get the current timestamp
-     * 
-     * @return const double& 
+     *
+     * @return const double&
      */
     const double &GetTS() const { return ts_; }
     /**
      * @brief Get the First Timestamp value in the TChain
-     * This method resets the file pointer to the begining 
-     * @return const double& 
+     * This method resets the file pointer to the begining
+     * @return const double&
      */
-    const double &GetFirstTS();
+    virtual const double &GetFirstTS();
     /**
      * @brief Get the Last Timestamp value in the TChain
-     * This method resets the file pointer to the begining 
-     * @return const double& 
+     * This method resets the file pointer to the begining
+     * @return const double&
      */
-    const double &GetLastTS();
+    virtual const double &GetLastTS();
 
-    const std::string &GetName() const {return name_;}
-    void Restart() {reader_->Restart();}
+    const std::string &GetName() const { return name_; }
+    void Restart() { reader_->Restart(); }
+
+    const bool IsEmpty() const { return empty_; }
 protected:
-    std::string name_; /// The name of this object
+    std::string name_;        /// The name of this object
     TChain *chain_ = nullptr; /// A pointer to the raw data tree chain
     double ts_;
     bool eof_ = false; /// The eof flag
     std::string branch_name_;
     TTreeReader *reader_ = nullptr;
+    bool empty_ = true;
 };
 
 #endif ///__TTREE_EVENT_LOADER_BASE__

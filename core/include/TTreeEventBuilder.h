@@ -50,7 +50,7 @@ public:
 protected:
     YamlReader *yaml_reader_ = nullptr;
     double time_window_;
-    std::vector<TTreeEventLoaderBase> event_loaders_;
+    std::vector<TTreeEventLoaderBase*> event_loaders_;
     ProgressPrinter* prog_ = nullptr;
     double print_freq_;
 };

@@ -18,6 +18,15 @@ void TTreeEventLoaderBase::Init(const YAML::Node &node)
     for(const auto &file : files){
         chain_->Add(file.c_str());
     }
+    if (chain_->GetEntries()<1)
+    {
+        /// Set the empty flag to true if there is no event
+        empty_ = true;
+    }
+    else
+    {
+        empty_ = false;
+    }
 
     if(reader_)
     {
@@ -29,13 +38,13 @@ void TTreeEventLoaderBase::Init(const YAML::Node &node)
 const double &TTreeEventLoaderBase::GetFirstTS()
 {
     reader_->Restart();
-    GetNext();
-    return GetTS();
+    this->GetNext();
+    return this->GetTS();
 }
 
 const double &TTreeEventLoaderBase::GetLastTS()
 {
-    chain_->GetEntry(chain_->GetEntries()-1);
-    LoadTS();
-    return GetTS();
+    reader_->SetEntry(chain_->GetEntries()-1);
+    this->LoadTS();
+    return this->GetTS();
 }

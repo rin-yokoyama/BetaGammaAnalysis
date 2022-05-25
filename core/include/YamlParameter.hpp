@@ -3,33 +3,41 @@
 #define VANDLE_MERGER_YAMLPARAMETER_H
 
 #include "yaml-cpp/yaml.h"
+#include <iostream>
 
-class YamlParameter : public YAML::Node{
+class YamlParameter : public YAML::Node
+{
 private:
-  YamlParameter(std::string file_name) : YAML::Node( YAML::LoadFile(file_name) ) {}
-  ~YamlParameter() = default; 
+  YamlParameter(std::string file_name) : YAML::Node(YAML::LoadFile(file_name)) {}
+  ~YamlParameter() = default;
 
-  static YamlParameter* instance;
+  static YamlParameter *instance;
 
 public:
   YamlParameter() = delete;
-  YamlParameter(const YamlParameter&) = delete;
-  YamlParameter& operator = (const YamlParameter&) = delete;
-  YamlParameter(YamlParameter&&) = delete;
-  YamlParameter& operator = (YamlParameter&&) = delete;
+  YamlParameter(const YamlParameter &) = delete;
+  YamlParameter &operator=(const YamlParameter &) = delete;
+  YamlParameter(YamlParameter &&) = delete;
+  YamlParameter &operator=(YamlParameter &&) = delete;
 
-  static YamlParameter& GetInstance() {
+  static YamlParameter &GetInstance()
+  {
     return *instance;
   }
 
-  static void Create(std::string file_name) {
-    if( !instance ) {
+  static void Create(std::string file_name)
+  {
+    if (!instance)
+    {
+      std::cout << "[YamlParameter]: Creating an instance from file " << file_name << std::endl;
       instance = new YamlParameter(file_name);
     }
   }
 
-  static void Destroy() {
-    if( instance ) {
+  static void Destroy()
+  {
+    if (instance)
+    {
       delete instance;
       instance = NULL;
     }
