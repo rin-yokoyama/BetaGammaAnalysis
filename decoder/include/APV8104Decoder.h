@@ -24,7 +24,7 @@ public:
 	 * @brief Construct a new APV8104Decoder object
 	 *
 	 */
-	APV8104Decoder() : APVDecoderBase<APVSingleData>(kEventDataSize), tdc_bin2ns_(1) {}
+	APV8104Decoder() : APVDecoderBase<APVSingleData>(kEventDataSize), tdc_bin2ns_(1.0) {}
 	/**
 	 * @brief Destroy the APV8104Decoder object
 	 *
@@ -47,8 +47,8 @@ public:
 
 private:
 	static const int kEventDataSize = 10; // data size of one event in bytes
-	const double kTDCBin2nsAPV8508 = 2;
-	const double kTDCBin2nsAPV8104 = 1;
+	const double kTDCBin2nsAPV8508 = 2.0;
+	const double kTDCBin2nsAPV8104 = 1.0;
 	std::map<const std::string, const double> bin2ns_map_ = {
 		{"APV8508", kTDCBin2nsAPV8508},
 		{"APV8104", kTDCBin2nsAPV8104}};

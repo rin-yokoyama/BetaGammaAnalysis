@@ -24,7 +24,7 @@ public:
      * @brief virtual function to load timestamp of the current event
      *
      */
-    virtual void LoadTS() {}
+    virtual void LoadTS() = 0;
     /**
      * @brief pure virtual function to load the next event
      *
@@ -53,9 +53,10 @@ public:
     virtual const double &GetLastTS();
 
     const std::string &GetName() const { return name_; }
-    void Restart() { reader_->Restart(); }
+    virtual void Restart() { reader_->Restart(); }
 
     const bool IsEmpty() const { return empty_; }
+
 protected:
     std::string name_;        /// The name of this object
     TChain *chain_ = nullptr; /// A pointer to the raw data tree chain

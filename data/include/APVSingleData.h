@@ -19,7 +19,10 @@ public:
 	 * @brief Default constructor of an APVSingleData object
 	 *
 	 */
-	APVSingleData() {}
+	APVSingleData() : fRunNumber(0), fEventId(0), fTiming(0), fCharge(0), fHigherBits(0)
+	// APVSingleData()
+	{
+	}
 
 	/**
 	 * @brief Construct a new APVSingleData object

@@ -1,8 +1,8 @@
 #include "APVDecodeManager.h"
 #include <iostream>
 
-const unsigned int APVDecodeManager::kPrintFreq = 128000*40;
-const unsigned int APVDecodeManager::kNWorkers = 4;
+const unsigned int APVDecodeManager::kPrintFreq = 1000000;
+const unsigned int APVDecodeManager::kNWorkers = 10;
 
 APVDecodeManager::~APVDecodeManager()
 {
@@ -48,7 +48,7 @@ void APVDecodeManager::Init(std::string module_type)
 		{
 			auto decoder = new APV8104Decoder();
 			decoder->SetAPVModuleType(module_type);
-			//auto decoder_base = (APVDecoderBase<APVSingleData> *)decoder;
+			// auto decoder_base = (APVDecoderBase<APVSingleData> *)decoder;
 			decoders_.emplace_back(*decoder);
 		}
 		loop_ready_ = true;
@@ -68,84 +68,92 @@ void APVDecodeManager::Loop()
 	}
 	std::cout << "[APVDecodeManager]: Starting the main loop..." << std::endl;
 	double ts_max = 0;
-	std::vector<APVSingleData *> last_block;
+	std::vector<APVSingleData> last_block;
 
 	/// main loop: read untill eof
 	while (!fin_.read(buffer_, sizeof(char) * kNWorkers * block_size_).eof())
 	{
 		std::vector<std::thread> threads;
-		auto func = [this](int i){decoders_[i].Decode(buffer_+i*block_size_, block_size_);};
+		auto func = [this](int i)
+		{ decoders_[i].Decode(buffer_ + i * block_size_, block_size_); };
 		for (int i = 0; i < kNWorkers; i++)
 		{
-			//threads.emplace_back(func, i);
+			// threads.emplace_back(func, i);
 			func(i);
 		}
 
-		//for (auto &th : threads)
+		// for (auto &th : threads)
 		//{
 		//	th.join();
-		//}
+		// }
 		/// combine vectors from each thread
-		std::vector<APVSingleData *> decoded;
+		std::vector<APVSingleData> decoded;
 		for (auto &decoder : decoders_)
 		{
 			decoded.insert(decoded.end(), decoder.GetDataVec().begin(), decoder.GetDataVec().end());
 		}
 
-		std::sort(decoded.begin(), decoded.end(), [](APVSingleData *x, APVSingleData *y)
-				  { return x->GetTiming() < y->GetTiming(); });
+		std::sort(decoded.begin(), decoded.end(), [](const APVSingleData &x, const APVSingleData &y)
+				  { return x.GetTiming() < y.GetTiming(); });
 
 		/// A function to insert elements that have smaller time stamps
 		/// than the last element of the previous block
-		auto moveElem = [&last_block](APVSingleData *x)
+		auto moveElem = [&last_block](const APVSingleData &x)
 		{
 			last_block.insert(
-				std::find_if(last_block.begin(), last_block.end(), [x](APVSingleData *a)
-							 { return a->GetTiming() > x->GetTiming(); }),
-				//last_block.end(),
+				std::find_if(last_block.begin(), last_block.end(), [x](const APVSingleData &a)
+							 { return a.GetTiming() > x.GetTiming(); }),
+				// last_block.end(),
 				x);
 		};
 
 		/// The iterator to the first element with a timestamp grater than ts_max
-		auto first_elem = std::find_if(decoded.begin(), decoded.end(), [&ts_max](APVSingleData *x)
-									   {return x->GetTiming() > ts_max; });
+		auto first_elem = std::find_if(decoded.begin(), decoded.end(), [&ts_max](const APVSingleData &x)
+									   { return x.GetTiming() > ts_max; });
 
 		if (first_elem == decoded.begin())
 		{
-			if(!last_block.empty())
+			if (!last_block.empty())
 			{
 				block_data_.SetData(last_block);
 				output_tree_->Fill();
 			}
-			if(!decoded.empty())
+			if (!decoded.empty())
 			{
 				last_block = decoded;
-				ts_max = last_block.back()->GetTiming();
+				ts_max = last_block.back().GetTiming();
 			}
 		}
 		else
 		{
 
-			//std::for_each(decoded.begin(), first_elem - 1, moveElem);
-			last_block.insert(last_block.end(), decoded.begin(), first_elem - 1);
-			std::sort(last_block.begin(), last_block.end(), [](APVSingleData *x, APVSingleData *y)
-					  { return x->GetTiming() < y->GetTiming(); });
+			// std::for_each(decoded.begin(), first_elem - 1, moveElem);
+			last_block.insert(last_block.end(), decoded.begin(), first_elem);
+			std::sort(last_block.begin(), last_block.end(), [](const APVSingleData &x, const APVSingleData &y)
+					  { return x.GetTiming() < y.GetTiming(); });
 
-			//for(const auto& dec: last_block){
+			// for(const auto& dec: last_block){
 			//	std::cout << std::fixed << std::setprecision(4) << dec->GetTiming() << std::endl;
-			//}
-			if(!last_block.empty()){
+			// }
+			if (!last_block.empty())
+			{
 				block_data_.SetData(last_block);
 				output_tree_->Fill();
 			}
-			//std::cout << last_block.size() << std::endl;
-			last_block = std::vector<APVSingleData *>(first_elem, decoded.end());
-			if(!last_block.empty()){
-				ts_max = last_block.back()->GetTiming();
+			// std::cout << last_block.size() << std::endl;
+			last_block = std::vector<APVSingleData>(first_elem, decoded.end());
+			if (!last_block.empty())
+			{
+				ts_max = last_block.back().GetTiming();
 			}
 		}
 
 		prog_printer_->PrintProgress(fin_.tellg());
+	}
+	if (!last_block.empty())
+	{
+		block_data_.SetData(last_block);
+		output_tree_->Fill();
 	}
 	output_tree_->Write();
 }

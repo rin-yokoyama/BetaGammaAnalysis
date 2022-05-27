@@ -10,27 +10,29 @@ bool APV8104EventLoader::GetNext()
     /// A function to load next APVMultiData event
     auto loadNextEvent = [this]()
     {
-        if(!reader_->Next())
+        if (!reader_->Next())
         {
             eof_ = true;
             return false;
         }
-        data_vec_ = data_reader_->Get();
-        itr_ = data_vec_->GetData().begin();
-        if(itr_ == data_vec_->GetData().end())
+        APVMultiData *mdata = data_reader_->Get();
+        data_vec_ = mdata->GetData();
+        itr_ = data_vec_->begin();
+        if (itr_ == data_vec_->end())
         {
             return false;
         }
-        ts_ = (*itr_)->GetTiming();
+        ts_ = (*itr_).GetTiming();
+        data_ = (*itr_);
         return true;
     };
 
-    if(!data_vec_)
+    if (!data_vec_)
     {
         /// First event
         return loadNextEvent();
     }
-    else if(itr_==data_vec_->GetData().end())
+    else if (itr_ == data_vec_->end())
     {
         /// End of an event
         return loadNextEvent();
@@ -39,12 +41,17 @@ bool APV8104EventLoader::GetNext()
     {
         /// Middle of an event
         ++itr_;
-        ts_ = (*itr_)->GetTiming();
-        return true;
+        if (itr_ < data_vec_->end())
+        {
+            ts_ = (*itr_).GetTiming();
+            data_ = (*itr_);
+            return true;
+        }
+        return loadNextEvent();
     }
 }
 
 void APV8104EventLoader::LoadTS()
 {
-    data_reader_->Get()->GetData().back()->GetTiming();
+    ts_ = data_reader_->Get()->GetData()->back().GetTiming();
 }

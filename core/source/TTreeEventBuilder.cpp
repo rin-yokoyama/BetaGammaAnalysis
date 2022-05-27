@@ -25,9 +25,8 @@ void TTreeEventBuilder::Loop()
     double min_ts = (*min_itr)->GetFirstTS();
     double max_ts = (*max_itr)->GetLastTS();
     Restart();
-    // double min_ts = 0;
-    // double max_ts = 0;
     prog_ = new ProgressPrinter(min_ts, max_ts, print_freq_);
+    // prog_ = new ProgressPrinter(0, 1, print_freq_);
     for (auto &loader : event_loaders_)
     {
         while (!loader->GetNext() && !loader->GetEoF())

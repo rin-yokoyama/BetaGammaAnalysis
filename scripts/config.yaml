@@ -1,21 +1,53 @@
 SH13EventBuilderConfig:
+  OutputFileName: /home/sh13/rootfiles/test.root
   TimeWindow: 1000.
-  PrintFrequency: 1000000
+  PrintFrequency: 100000
 
-  APV8008Loader:
-    TreeName: Tree
-    BranchName: test
-    FileNames:
-      - apvdata0060.root
+  EventLoaders:
+    APV8008Loader:
+      TreeName: tree
+      BranchName: rawdata
+      FileNames:
+        - /home/sh13/art_analysis/user/yokoyama/output/apv/0096/apvapv0096.root
 
-  APV8104Loader:
-    TreeName: APVTree
-    BranchName: APVMultiData
-    FileNames:
-      - data0002.root
+    APV8104Loader:
+      TreeName: APVTree
+      BranchName: APVMultiData
+      FileNames:
+        - /home/sh13/rootfiles/port5042_run0044.root
 
-  APV8508Loader:
-    TreeName: APVTree
-    BranchName: APVMultiData
-    FileNames:
-      - data0002.root
+    APV8508Loader:
+      TreeName: APVTree
+      BranchName: APVMultiData
+      FileNames:
+        - /home/sh13/rootfiles/port5041_run0044.root
+
+SH13PIDTSScanner:
+  InputFileName: /home/sh13/art_analysis/user/yokoyama/output/merge/pid_isomer0083.root
+  TreeName: tree
+  BranchName: pid_data
+#  FirstEntry: 0
+#  LastEntry: 10000
+
+S2PlusTSScanner:
+  InputFileName: /home/sh13/rootfiles/test.root
+  TreeName: SH13S2PlusTree
+  PixieBranchName: SH13S2PlusData
+  PrintFrequency: 100000
+  #OtherBranches:
+  #  - "clover_vec_"
+  #  #- "event_info_"
+  #  #- "file_name"
+  #  #- "pixie_event_num"
+#  FirstEntry: 0
+#  LastEntry: 1000000
+
+Merger:
+  OutputFileName: rootfiles/merged_0083.root
+  TreeName: merged
+  BranchName: merged
+  ClassName: OutputTreeData<art::TMergerData, S2PlusData>
+  TimeWindowLow: -100000
+  TimeWindowUp: 100000
+  TimeStampScale: 1
+  ScanWindow: 1E+9

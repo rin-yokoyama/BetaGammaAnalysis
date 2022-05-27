@@ -5,6 +5,7 @@ ROOT_GENERATE_DICTIONARY(G__APVData
 	APVSingleData.h
 	APVMultiData.h
 	SH13S2PlusData.h
+	OutputTreeData.hpp
 	#TAPV8008Data.h
 	#TDataObject.h
 	#ITiming.h

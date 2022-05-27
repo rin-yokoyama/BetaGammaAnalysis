@@ -43,8 +43,8 @@ int main(int argc, char **argv)
 		}
 	}
 	APVDecodeManager manager(input_file_name, output_file_name);
-	manager.SetBlockSize(128);
-	manager.Init("APV8104");
+	manager.SetBlockSize(10);
+	manager.Init(module_name);
 	manager.Loop();
 
 	std::cout << "[APVDecoderMain]: Main loop done." << std::endl;

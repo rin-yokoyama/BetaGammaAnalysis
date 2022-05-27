@@ -38,11 +38,11 @@ public:
 	 */
 	virtual ~APVMultiData() {}
 
-	void SetData(std::vector<APVSingleData *> data) { data_vec_ = data; }
-	std::vector<APVSingleData*> &GetData() { return data_vec_;}
+	void SetData(const std::vector<APVSingleData> &data) { data_vec_ = data; }
+	std::vector<APVSingleData> *GetData() { return &data_vec_; }
 
 private:
-	std::vector<APVSingleData *> data_vec_;
+	std::vector<APVSingleData> data_vec_;
 	ClassDef(APVMultiData, 1)
 };
 

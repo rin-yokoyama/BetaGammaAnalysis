@@ -14,6 +14,10 @@
 #pragma link C++ class std::vector < APVSingleData *> + ;
 #pragma link C++ class APVMultiData + ;
 #pragma link C++ class SH13S2PlusData + ;
+#pragma link C++ class std::vector < art::TAPV8008Data> + ;
+#pragma link C++ class std::vector < SH13S2PlusData> + ;
+#pragma link C++ class OutputTreeData < art::TMergerData, SH13S2PlusData> + ;
+
 //#pragma link C++ class art::TAPV8008Data + ;
 //#pragma link C++ class art::ITiming + ;
 //#pragma link C++ class art::ICharge + ;

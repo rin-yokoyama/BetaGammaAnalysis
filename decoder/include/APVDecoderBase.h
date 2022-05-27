@@ -36,7 +36,7 @@ public:
 	 * @param size size of the buffer to read in bytes
 	 * @return const std::vector<T *>&
 	 */
-	virtual std::vector<T *> &Decode(char *buff, int size);
+	virtual std::vector<T> &Decode(char *buff, int size);
 	/**
 	 * @brief Decode and sort a block of data
 	 *
@@ -44,7 +44,7 @@ public:
 	 * @param size   size of the buffer to read in bytes
 	 * @return std::vector<T *>&
 	 */
-	virtual std::vector<T *> &SortedDecode(char *buff, int size);
+	virtual std::vector<T> &SortedDecode(char *buff, int size);
 
 	/**
 	 * @brief Set the Runnumber object
@@ -53,40 +53,37 @@ public:
 	 */
 	void SetRunnumber(int number) { run_number_ = number; }
 
-	const std::vector<T *> &GetDataVec() const { return data_vec_; }
+	const std::vector<T> &GetDataVec() const { return data_vec_; }
 
 protected:
-	virtual T *DecodeAnEvent(char *buff);
+	virtual T *DecodeAnEvent(char *buff) = 0;
 	int run_number_;
 	ULong64_t event_id_;
 
 private:
-	const int event_size_;		// Data size of one event in bytes
-	std::vector<T *> data_vec_; // Vector of event data
+	const int event_size_;	  // Data size of one event in bytes
+	std::vector<T> data_vec_; // Vector of event data
 };
 
 template <class T>
-std::vector<T *> &APVDecoderBase<T>::Decode(char *buff, int size)
+std::vector<T> &APVDecoderBase<T>::Decode(char *buff, int size)
 {
 	const unsigned long long n_event = size / event_size_;
 	data_vec_.clear();
-	for (unsigned long long i = 0; i < n_event; i += event_size_)
+	for (unsigned long long i = 0; i < n_event; ++i)
 	{
-		data_vec_.emplace_back(DecodeAnEvent(buff + i));
+		data_vec_.emplace_back(*DecodeAnEvent(&buff[i * event_size_]));
 	}
 	return data_vec_;
 }
 
 template <class T>
-std::vector<T *> &APVDecoderBase<T>::SortedDecode(char *buff, int size)
+std::vector<T> &APVDecoderBase<T>::SortedDecode(char *buff, int size)
 {
 	Decode(buff, size);
-	std::sort(data_vec_.begin(), data_vec_.end(), [](T *x, T *y)
-			  { return x->GetTiming() < y->GetTiming(); });
+	std::sort(data_vec_.begin(), data_vec_.end(), [](const T &x, const T &y)
+			  { return x.GetTiming() < y.GetTiming(); });
 	return data_vec_;
 }
-
-template <class T>
-T *APVDecoderBase<T>::DecodeAnEvent(char *buff) {}
 
 #endif
