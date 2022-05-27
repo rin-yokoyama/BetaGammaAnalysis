@@ -23,7 +23,9 @@ if __name__ == '__main__':
     apv129_name = APV129_DATA_PATH + "port5041_run" + runnum + ".bin"
 
     sharaq_rootname = ARTEMIS_WORK + "output/merge/pid_" + RUNNAME + runnumsh +".root"
+    sharaq_mvroot = OUTPUT_DATA_PATH + "pid_" + RUNNAME + runnumsh + ".root"
     apv009_rootname = ARTEMIS_WORK + "output/apv/" + runnumge + "/apvapv" + runnumge +".root"
+    apv009_mvroot = OUTPUT_DATA_PATH + "apvapv" + runnumge + ".root"
     apv128_rootname = OUTPUT_DATA_PATH + "port5042_run" + runnum + ".root"
     apv129_rootname = OUTPUT_DATA_PATH + "port5041_run" + runnum + ".root"
 
@@ -35,27 +37,30 @@ if __name__ == '__main__':
     cmd = "source " + THIS_ISOMER_PATH + "; cd " + ARTEMIS_WORK + "; " + ARTEMIS_WORK + "build/run_artemis " + ARTEMIS_WORK+"steering/merge.yaml " + RUNNAME + " " + runnumsh
     print(cmd)
     procs.append(subprocess.Popen([cmd],shell=True))
-    cmd = "source " + THIS_ISOMER_PATH +"; " + INSTALL_DIR + "apv_decoder -i " + apv128_name + " -o " + apv128_rootname
+    cmd = "source " + THIS_ISOMER_PATH +"; " + INSTALL_DIR + "apv_decoder -t APV8508 -i " + apv128_name + " -o " + apv128_rootname
     print(cmd)
     procs.append(subprocess.Popen([cmd],shell=True))
-    cmd = "source " + THIS_ISOMER_PATH + "; " + INSTALL_DIR + "apv_decoder -i " + apv129_name + " -o " + apv129_rootname
+    cmd = "source " + THIS_ISOMER_PATH + "; " + INSTALL_DIR + "apv_decoder -i APV8104 " + apv129_name + " -o " + apv129_rootname
     print(cmd)
     procs.append(subprocess.Popen([cmd],shell=True))
 
     for proc in procs:
         proc.communicate()
-
+    cmd = "mv " + apv009_rootname + " " + OUTPUT_DATA_PATH
+    subprocess.call([cmd],shell=True)
+    cmd = "mv " + sharaq_rootname + " " + OUTPUT_DATA_PATH
+    subprocess.call([cmd],shell=True)
     # Event build
     S2PLUS_OUTPUT = OUTPUT_DATA_PATH + "s2plus_apv" + runnum + "_sh" + runnumge + ".root"
     MERGED_OUTPUT = OUTPUT_DATA_PATH + "merged_apv" + runnum + "_ge" + runnumge + "_sh" + runnumsh +".root"
     yaml_file = open(YAML_FILE_NAME)
     yaml_data = yaml.safe_load(yaml_file) 
     yaml_file.close()
-    yaml_data["SH13EventBuilderConfig"]["EventLoaders"]["APV8008Loader"]["FileNames"][0] = apv009_rootname
+    yaml_data["SH13EventBuilderConfig"]["EventLoaders"]["APV8008Loader"]["FileNames"][0] = apv009_mvroot
     yaml_data["SH13EventBuilderConfig"]["EventLoaders"]["APV8104Loader"]["FileNames"][0] = apv128_rootname
     yaml_data["SH13EventBuilderConfig"]["EventLoaders"]["APV8508Loader"]["FileNames"][0] = apv129_rootname
     yaml_data["SH13EventBuilderConfig"]["OutputFileName"] = S2PLUS_OUTPUT
-    yaml_data["SH13PIDTSScanner"]["InputFileName"] = sharaq_rootname
+    yaml_data["SH13PIDTSScanner"]["InputFileName"] = sharaq_mvroot
     yaml_data["S2PlusTSScanner"]["InputFileName"] = S2PLUS_OUTPUT
     yaml_data["S2PlusTSScanner"]["InputFileName"] = S2PLUS_OUTPUT
     yaml_data["Merger"]["OutputFileName"] = MERGED_OUTPUT
