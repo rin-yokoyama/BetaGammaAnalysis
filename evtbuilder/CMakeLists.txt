@@ -8,12 +8,13 @@ set(LIB_SOURCES
 	source/APV8008EventLoader.cpp
 	source/SH13TreeEventBuilder.cpp
 )
+
 set(EXE_NAME evtbuilder)
-add_library(${LIB_NAME} ${LIB_SOURCES})
+add_library(${LIB_NAME} SHARED ${LIB_SOURCES})
 add_executable(${EXE_NAME} source/SH13EventBuilderMain.cpp)
 
-target_link_libraries(${LIB_NAME} ${ROOT_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} ${ARTLIBS} APVData APVCore)
-target_link_libraries(${EXE_NAME} ${ROOT_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} ${ARTLIBS} ${LIB_NAME} APVData APVCore)
+target_link_libraries(${LIB_NAME} ${ROOT_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} APVData APVCore)
+target_link_libraries(${EXE_NAME} ${ROOT_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} ${LIB_NAME} APVData APVCore)
 
 install(TARGETS ${EXE_NAME}
 		RUNTIME DESTINATION bin

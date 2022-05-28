@@ -1,6 +1,6 @@
 SH13EventBuilderConfig:
   OutputFileName: /home/sh13/rootfiles/test.root
-  TimeWindow: 1000.
+  TimeWindow: 3000.
   PrintFrequency: 100000
 
   EventLoaders:
@@ -25,7 +25,12 @@ SH13EventBuilderConfig:
 SH13PIDTSScanner:
   InputFileName: /home/sh13/art_analysis/user/yokoyama/output/merge/pid_isomer0083.root
   TreeName: tree
-  BranchName: pid_data
+  BranchName: S2TS
+  OtherBranches:
+    - S2AQ
+    - S2Z
+    - VETO_TAve
+    - VETO_QAve
 #  FirstEntry: 0
 #  LastEntry: 10000
 
@@ -46,7 +51,7 @@ Merger:
   OutputFileName: rootfiles/merged_0083.root
   TreeName: merged
   BranchName: merged
-  ClassName: OutputTreeData<art::TMergerData, S2PlusData>
+  ClassName: OutputTreeData<ULong64_t, S2PlusData>
   TimeWindowLow: -100000
   TimeWindowUp: 100000
   TimeStampScale: 1

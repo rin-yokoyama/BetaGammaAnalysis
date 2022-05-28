@@ -4,7 +4,7 @@
 #include "TSScannerBase.hpp"
 #include "TMergerData.h"
 
-class SH13PIDTSScanner : public TSScannerBase<art::TMergerData>
+class SH13PIDTSScanner : public TSScannerBase<ULong64_t>
 {
 public:
 	const static std::string kMsgPrefix;
@@ -20,7 +20,7 @@ protected:
 			throw kMsgPrefix + "In GetTS(), tree_data_ is null";
 		if (!tree_data_->Get())
 			throw kMsgPrefix + "In GetTS(), tree_data_->Get() returned null";
-		return tree_data_->Get()->GetULongTimestamp();
+		return *tree_data_->Get();
 	}
 };
 #endif /// __SH13PID_TSSCANNER_H__

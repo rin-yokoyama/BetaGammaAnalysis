@@ -69,7 +69,7 @@ int main(int argc, char **argv)
         std::cout << "[MergerMain]: S2+ map size: " << s2plus_ts_scanner.GetIEntryMap().size() << std::endl;
 
         /** runs merger **/
-        TreeMerger<OutputTreeData<art::TMergerData, SH13S2PlusData>, art::TMergerData, SH13S2PlusData> merger(&sharaq_ts_scanner, &s2plus_ts_scanner);
+        TreeMerger<OutputTreeData<ULong64_t, SH13S2PlusData>, ULong64_t, SH13S2PlusData> merger(&sharaq_ts_scanner, &s2plus_ts_scanner);
         merger.Configure("TreeMerger");
         merger.Merge();
         merger.Write();

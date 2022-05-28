@@ -18,10 +18,15 @@ if __name__ == '__main__':
     runnumge = sys.argv[2]
     runnumsh = sys.argv[3]
     RUNNAME = sys.argv[4]
+    #runnum = '0071'
+    #runnumge = '0123'
+    #runnumsh = '0137'
     apv009_name = APV009_DATA_PATH + "apv" + runnum + ".ridf"
     apv128_name = APV128_DATA_PATH + "port5042_run" + runnum + ".bin"
     apv129_name = APV129_DATA_PATH + "port5041_run" + runnum + ".bin"
 
+    sharaq_bldname = ARTEMIS_WORK + "output/" + RUNNAME +"/"+ runnumsh +"/pidata"+RUNNAME+runnumsh+".root"
+    sharaq_mvbld = OUTPUT_DATA_PATH + "pidata" + RUNNAME + runnumsh + ".root"
     sharaq_rootname = ARTEMIS_WORK + "output/merge/pid_" + RUNNAME + runnumsh +".root"
     sharaq_mvroot = OUTPUT_DATA_PATH + "pid_" + RUNNAME + runnumsh + ".root"
     apv009_rootname = ARTEMIS_WORK + "output/apv/" + runnumge + "/apvapv" + runnumge +".root"
@@ -33,22 +38,31 @@ if __name__ == '__main__':
     procs = []
     cmd = "source " + THIS_ISOMER_PATH + "; cd " + ARTEMIS_WORK + "; " + ARTEMIS_WORK + "build/run_artemis " + ARTEMIS_WORK+"steering/chkdaq.yaml apv " + runnumge
     print(cmd)
-    procs.append(subprocess.Popen([cmd],shell=True))
+    #procs.append(subprocess.Popen([cmd],shell=True))
     cmd = "source " + THIS_ISOMER_PATH + "; cd " + ARTEMIS_WORK + "; " + ARTEMIS_WORK + "build/run_artemis " + ARTEMIS_WORK+"steering/merge.yaml " + RUNNAME + " " + runnumsh
     print(cmd)
-    procs.append(subprocess.Popen([cmd],shell=True))
+    #procs.append(subprocess.Popen([cmd],shell=True))
+    cmd = "source " + THIS_ISOMER_PATH + "; cd " + ARTEMIS_WORK + "; " + ARTEMIS_WORK + "build/run_artemis " + ARTEMIS_WORK+"steering/pidata.yaml " + RUNNAME + " " + runnumsh
+    print(cmd)
+    #procs.append(subprocess.Popen([cmd],shell=True))
     cmd = "source " + THIS_ISOMER_PATH +"; " + INSTALL_DIR + "apv_decoder -t APV8508 -i " + apv128_name + " -o " + apv128_rootname
     print(cmd)
-    procs.append(subprocess.Popen([cmd],shell=True))
-    cmd = "source " + THIS_ISOMER_PATH + "; " + INSTALL_DIR + "apv_decoder -i APV8104 " + apv129_name + " -o " + apv129_rootname
+    #procs.append(subprocess.Popen([cmd],shell=True))
+    cmd = "source " + THIS_ISOMER_PATH + "; " + INSTALL_DIR + "apv_decoder -t APV8104 -i " + apv129_name + " -o " + apv129_rootname
     print(cmd)
-    procs.append(subprocess.Popen([cmd],shell=True))
+    #procs.append(subprocess.Popen([cmd],shell=True))
 
     for proc in procs:
         proc.communicate()
     cmd = "mv " + apv009_rootname + " " + OUTPUT_DATA_PATH
-    subprocess.call([cmd],shell=True)
+    #subprocess.call([cmd],shell=True)
     cmd = "mv " + sharaq_rootname + " " + OUTPUT_DATA_PATH
+    #subprocess.call([cmd],shell=True)
+    cmd = "mv " + sharaq_bldname + " " + OUTPUT_DATA_PATH
+    #subprocess.call([cmd],shell=True)
+
+    cmd = "cd /home/sh13/isomer/scripts; a 'pid_merger.C(\"" + sharaq_mvbld +"\",\""+sharaq_mvroot+"\",\""+OUTPUT_DATA_PATH+"pid"+RUNNAME+runnumsh+".root\")'" 
+    print(cmd)
     subprocess.call([cmd],shell=True)
     # Event build
     S2PLUS_OUTPUT = OUTPUT_DATA_PATH + "s2plus_apv" + runnum + "_sh" + runnumge + ".root"
@@ -70,9 +84,9 @@ if __name__ == '__main__':
 
     cmd = "source " + THIS_ISOMER_PATH +"; " + INSTALL_DIR + "evtbuilder -c " + config_file_name
     print(cmd)
-    #subprocess.call([cmd], shell=True)
+    subprocess.call([cmd], shell=True)
 
     # Event merge
     cmd = "source " + THIS_ISOMER_PATH +"; " + INSTALL_DIR + "merger -c " + config_file_name
     print(cmd)
-    #subprocess.call([cmd], shell=True)
+    subprocess.call([cmd], shell=True)

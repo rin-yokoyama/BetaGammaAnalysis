@@ -8,11 +8,11 @@ set(LIB_SOURCES
 	source/SH13PIDTSScanner.cpp
 )
 set(EXE_NAME merger)
-add_library(${LIB_NAME} ${LIB_SOURCES})
+add_library(${LIB_NAME} SHARED ${LIB_SOURCES})
 add_executable(${EXE_NAME} source/SH13MergerMain.cpp)
 
-target_link_libraries(${LIB_NAME} ${ROOT_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} ${ARTLIBS} APVData APVCore)
-target_link_libraries(${EXE_NAME} ${ROOT_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} ${ARTLIBS} ${LIB_NAME} APVData APVCore)
+target_link_libraries(${LIB_NAME} ${ROOT_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} APVData APVCore)
+target_link_libraries(${EXE_NAME} ${ROOT_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} ${LIB_NAME} APVData APVCore)
 
 install(TARGETS ${EXE_NAME}
 		RUNTIME DESTINATION bin

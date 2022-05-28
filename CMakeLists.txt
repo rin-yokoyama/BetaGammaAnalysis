@@ -22,6 +22,7 @@ find_package(Threads)
 
 set(ARTEMIS_PATH /opt/local/artemis CACHE PATH "path to artemis install" FORCE)
 set(ARTEMIS_OEDO_PATH /home/sh13/art_analysis/user/yokoyama/src-oedo CACHE PATH "path to artemis src-oedo" FORCE)
+set(ARTEMIS_SRC_PATH /home/ota/repos/artemis/sources/ CACHE PATH "path to artemis src" FORCE)
 set(ARTEMIS_SHARE_PATH /home/ota/repos/artemis-share/ CACHE PATH "path to artemis share" FORCE)
 set(ARTEMIS_CAT_PATH /home/ota/repos/artemis-cat-src/ CACHE PATH "path to artemis cat" FORCE)
 set(GETDECODER_PATH /opt/local/GETDecoder/ CACHE PATH "path to get decoder" FORCE)
