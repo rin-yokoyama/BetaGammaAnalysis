@@ -1,6 +1,7 @@
-set(LIB_NAME APVCore)
+set(LIB_NAME BetaGammaCore)
 
 include_directories(include)
+
 add_library( ${LIB_NAME} SHARED
 	source/RemainTime.cpp
 	source/ProgressPrinter.cpp
