@@ -1,4 +1,5 @@
 set(LIB_NAME Eurica)
+set(EXE_NAME eurica_merger)
 
 include_directories(include)
 
@@ -10,12 +11,18 @@ ROOT_GENERATE_DICTIONARY(G__Eurica
 
 add_library( ${LIB_NAME} SHARED
 	G__Eurica.cxx
+	#source/Data_bigrips.C
+	#source/Data_wasabi.C
+	#source/Data_eurica.C
     source/BigRIPSTSScanner.cc
     source/EuricaTSScanner.cc
     source/WasabiTSScanner.cc
+	source/WasabiDataTSScanner.cc
+	source/BetaTSScanner.cc
+	source/ImplantTSScanner.cc
 )
 
-target_link_libraries(${LIB_NAME} ${ROOT_LIBRARIES})
+target_link_libraries(${LIB_NAME} ${ROOT_LIBRARIES} yaml-cpp BetaGammaCore)
 
 install(TARGETS ${LIB_NAME}
 		LIBRARY DESTINATION lib
@@ -27,3 +34,9 @@ install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include
 		DESTINATION include
 		FILES_MATCHING PATTERN "*.h"
 		)
+
+add_executable(${EXE_NAME} source/EuricaMergerMain.cpp)
+target_link_libraries(${EXE_NAME} ${ROOT_LIBRARIES} yaml-cpp BetaGammaCore ${LIB_NAME})
+
+install(TARGETS ${EXE_NAME}
+		RUNTIME DESTINATION bin)

@@ -192,10 +192,11 @@ public:
    TBranch *b_ZET;                   //!
    TBranch *b_RAOQ;                  //!
 
-   //   Data_bigrips(TTree *tree=0);
+   Data_bigrips(){};
+   virtual ~Data_bigrips(){};
+#ifdef Data_bigrips_cxx
    virtual void Read(char *filename);
    virtual void e_blanch();
-   virtual ~Data_bigrips();
    virtual Int_t Cut(Long64_t entry);
    virtual Int_t GetEntry(Long64_t entry);
    virtual Long64_t LoadTree(Long64_t entry);
@@ -203,6 +204,7 @@ public:
    virtual void Loop();
    virtual Bool_t Notify();
    virtual void Show(Long64_t entry = -1);
+#endif
 };
 
 #endif

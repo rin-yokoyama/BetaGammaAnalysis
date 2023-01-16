@@ -196,7 +196,9 @@ public:
    TBranch *b_pid_AoQ_F5F7;           //!
    TBranch *b_pid_Zet_F11;            //!
 
-   virtual ~Data_wasabi();
+   Data_wasabi(){};
+   virtual ~Data_wasabi(){};
+#ifdef Data_wasabi_cxx
    virtual void Read(char *filename);
    virtual void e_blanch();
    virtual Int_t Cut(Long64_t entry);
@@ -206,6 +208,7 @@ public:
    virtual void Loop();
    virtual Bool_t Notify();
    virtual void Show(Long64_t entry = -1);
+#endif
 };
 
 #endif

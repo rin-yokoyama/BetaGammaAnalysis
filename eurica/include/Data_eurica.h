@@ -410,9 +410,11 @@ public:
    TBranch *b_BigRIPSRaw_AoQ_F3F5;        //!
    TBranch *b_BigRIPSRaw_Zed_F11;         //!
 
+   Data_eurica() {}
+   virtual ~Data_eurica(){};
+#ifdef Data_eurica_cxx
    virtual void Read(char *filename);
    virtual void e_blanch();
-   virtual ~Data_eurica();
    virtual Int_t Cut(Long64_t entry);
    virtual Int_t GetEntry(Long64_t entry);
    virtual Long64_t LoadTree(Long64_t entry);
@@ -420,6 +422,7 @@ public:
    virtual void Loop();
    virtual Bool_t Notify();
    virtual void Show(Long64_t entry = -1);
+#endif
 };
 
 #endif
