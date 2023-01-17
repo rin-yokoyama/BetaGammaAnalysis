@@ -9,6 +9,7 @@
 #include "EuricaBetaTSScanner.h"
 #include "OutputTreeData.hpp"
 #include "TreeMerger.hpp"
+#include "EuricaBetaTreeMerger.h"
 #include "EuricaMergerData.hpp"
 
 /** prints usage **/
@@ -56,7 +57,7 @@ int main(int argc, char **argv)
         eurica::EuricaTSScanner eurica_ts_scanner;
 
         /** configures timestamp scannors with the yaml file **/
-        wasabi_ts_scanner.Configure("EuricaWasabiTSScannor");
+        wasabi_ts_scanner.Configure("WasabiTSScannor");
         eurica_ts_scanner.Configure("EuricaTSScannor");
 
         /** sets TTreeReaderValue objects **/
@@ -136,7 +137,7 @@ int main(int argc, char **argv)
         std::cout << "[MergerMain]: beta map size: " << beta_ts_scanner.GetIEntryMap().size() << std::endl;
 
         /** runs merger **/
-        TreeMerger<eurica::BetaMergedData, eurica::MergedData, eurica::MergedData> merger(&beta_ts_scanner, &implant_ts_scanner);
+        eurica::BetaTreeMerger merger(&beta_ts_scanner, &implant_ts_scanner);
         merger.Configure("BetaImplantTreeMerger");
         merger.Merge();
         merger.Write();

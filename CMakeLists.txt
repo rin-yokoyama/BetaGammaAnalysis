@@ -27,6 +27,7 @@ option(BUILD_EURICA "Build and install Eurica analysis tools" OFF)
 
 include_directories(${yaml_cpp_INCLUDEDIR})
 include_directories(core/include)
+include_directories(${CMAKE_BINARY_DIR}/generated)
 
 link_directories(${ROOTSYS}/lib)
 link_directories(${yaml_cpp_LIBDIR})
@@ -41,4 +42,5 @@ if(BUILD_EURICA)
     add_subdirectory(eurica)
 endif()
 
+add_subdirectory(scripts)
 add_subdirectory(share)

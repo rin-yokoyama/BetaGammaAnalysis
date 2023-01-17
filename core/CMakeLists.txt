@@ -1,5 +1,7 @@
 set(LIB_NAME BetaGammaCore)
 
+configure_file(include/LibraryConfig.h.in ${CMAKE_BINARY_DIR}/generated/LibraryConfig.h)
+
 include_directories(include)
 
 add_library( ${LIB_NAME} SHARED

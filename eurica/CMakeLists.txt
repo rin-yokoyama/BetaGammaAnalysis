@@ -7,6 +7,8 @@ ROOT_GENERATE_DICTIONARY(G__Eurica
     Data_bigrips.h
     Data_eurica.h
     Data_wasabi.h
+	EuricaMergerData.hpp
+	EuricaBigRIPSPreScanSelector.h
 	LINKDEF include/EuricaLinkDef.h)
 
 add_library( ${LIB_NAME} SHARED
@@ -14,12 +16,14 @@ add_library( ${LIB_NAME} SHARED
 	#source/Data_bigrips.C
 	#source/Data_wasabi.C
 	#source/Data_eurica.C
-    source/BigRIPSTSScanner.cc
-    source/EuricaTSScanner.cc
-    source/WasabiTSScanner.cc
-	source/WasabiDataTSScanner.cc
-	source/BetaTSScanner.cc
-	source/ImplantTSScanner.cc
+	source/BigRIPSPreScanSelector.cc
+	#source/BigRIPSTSScanner.cc
+	#source/EuricaTSScanner.cc
+	#source/WasabiTSScanner.cc
+	#source/WasabiDataTSScanner.cc
+	#source/BetaTSScanner.cc
+	#source/ImplantTSScanner.cc
+	#source/BetaTreeMerger.cc
 )
 
 target_link_libraries(${LIB_NAME} ${ROOT_LIBRARIES} yaml-cpp BetaGammaCore)
@@ -27,7 +31,7 @@ target_link_libraries(${LIB_NAME} ${ROOT_LIBRARIES} yaml-cpp BetaGammaCore)
 install(TARGETS ${LIB_NAME}
 		LIBRARY DESTINATION lib
 		)
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libAPVData_rdict.pcm
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libEurica_rdict.pcm
 		DESTINATION lib
 		)
 install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include
@@ -35,8 +39,16 @@ install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include
 		FILES_MATCHING PATTERN "*.h"
 		)
 
-add_executable(${EXE_NAME} source/EuricaMergerMain.cpp)
-target_link_libraries(${EXE_NAME} ${ROOT_LIBRARIES} yaml-cpp BetaGammaCore ${LIB_NAME})
+#add_executable(${EXE_NAME} source/EuricaMergerMain.cpp)
+#target_link_libraries(${EXE_NAME} ${ROOT_LIBRARIES} yaml-cpp BetaGammaCore ${LIB_NAME})
+#
+#install(TARGETS ${EXE_NAME}
+#		RUNTIME DESTINATION bin)
 
-install(TARGETS ${EXE_NAME}
+add_executable(bigrips_prescan source/BigRIPSPreScanMain.cc)
+target_link_libraries(bigrips_prescan ${ROOT_LIBRARIES} BetaGammaCore ${LIB_NAME})
+
+install(TARGETS bigrips_prescan
 		RUNTIME DESTINATION bin)
+
+add_subdirectory(scripts)

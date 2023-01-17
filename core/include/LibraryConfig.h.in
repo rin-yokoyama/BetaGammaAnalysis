@@ -1,0 +1,14 @@
+// This file defines a function that reruns a string of the path to the
+// install/lib dir.
+// cmake will replace install path and generate a header file in generated/
+// before compilation.
+#ifndef BETA_GAMMA_ANALYSIS_LIBRARY_CONFIG_H
+#define BETA_GAMMA_ANALYSIS_LIBRARY_CONFIG_H
+
+#include <string>
+std::string getDataLibDir()
+{
+    return "@CMAKE_INSTALL_PREFIX@/lib/";
+}
+
+#endif
