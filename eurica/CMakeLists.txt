@@ -9,6 +9,8 @@ ROOT_GENERATE_DICTIONARY(G__Eurica
     Data_wasabi.h
 	EuricaMergerData.hpp
 	EuricaBigRIPSPreScanSelector.h
+	EuricaWasabiPreScanSelector.h
+	EuricaPreScanSelector.h
 	LINKDEF include/EuricaLinkDef.h)
 
 add_library( ${LIB_NAME} SHARED
@@ -17,6 +19,8 @@ add_library( ${LIB_NAME} SHARED
 	#source/Data_wasabi.C
 	#source/Data_eurica.C
 	source/BigRIPSPreScanSelector.cc
+	source/WasabiPreScanSelector.cc
+	source/EuricaPreScanSelector.cc
 	#source/BigRIPSTSScanner.cc
 	#source/EuricaTSScanner.cc
 	#source/WasabiTSScanner.cc
@@ -48,7 +52,10 @@ install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include
 add_executable(bigrips_prescan source/BigRIPSPreScanMain.cc)
 target_link_libraries(bigrips_prescan ${ROOT_LIBRARIES} BetaGammaCore ${LIB_NAME})
 
-install(TARGETS bigrips_prescan
+add_executable(wasabi_prescan source/WasabiPreScanMain.cc)
+target_link_libraries(wasabi_prescan ${ROOT_LIBRARIES} BetaGammaCore ${LIB_NAME})
+
+install(TARGETS bigrips_prescan wasabi_prescan
 		RUNTIME DESTINATION bin)
 
 add_subdirectory(scripts)

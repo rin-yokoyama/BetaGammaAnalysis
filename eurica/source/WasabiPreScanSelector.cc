@@ -1,5 +1,5 @@
 /**
- * @file BigRIPSPreScanSelector.cc
+ * @file WasabiPreScanSelector.cc
  * @author Rin Yokoyama (yokoyama@cns.s.u-tokyo.ac.jp)
  * @brief
  * @version 0.1
@@ -8,28 +8,28 @@
  * @copyright Copyright (c) 2023
  *
  */
-#include "EuricaBigRIPSPreScanSelector.h"
+#include "EuricaWasabiPreScanSelector.h"
 #include "TDirectory.h"
 
-ClassImp(eurica::BigRIPSPreScanSelector)
+ClassImp(eurica::WasabiPreScanSelector)
 
-    eurica::BigRIPSPreScanSelector::BigRIPSPreScanSelector(TTree *tree) : tree_reader_(tree),
-                                                                          aoq_(tree_reader_, "AOQ"),
-                                                                          zet_(tree_reader_, "ZET"),
-                                                                          ts_(tree_reader_, "EventInfo.timestamp"),
-                                                                          evtnumber_(tree_reader_, "EventInfo.eventnumber"),
-                                                                          runnumber_(tree_reader_, "EventInfo.runnumber"),
-                                                                          output_file_name_("default_name")
+    eurica::WasabiPreScanSelector::WasabiPreScanSelector(TTree *tree) : tree_reader_(tree),
+                                                                        dssdE_(tree_reader_, "DSSD_E"),
+                                                                        dssdT_(tree_reader_, "DSSD_T"),
+                                                                        ts_(tree_reader_, "EventInfo.timestamp"),
+                                                                        evtnumber_(tree_reader_, "EventInfo.eventnumber"),
+                                                                        runnumber_(tree_reader_, "EventInfo.runnumber"),
+                                                                        output_file_name_("default_name")
 {
 }
 
-eurica::BigRIPSPreScanSelector::~BigRIPSPreScanSelector()
+eurica::WasabiPreScanSelector::~WasabiPreScanSelector()
 {
     if (fOutputFile)
         delete fOutputFile;
 }
 
-void eurica::BigRIPSPreScanSelector::Begin(TTree *tree)
+void eurica::WasabiPreScanSelector::Begin(TTree *tree)
 {
     // Begin() is called only in the client process.
     // Get OutputFileName from the list of input objects.
@@ -42,7 +42,7 @@ void eurica::BigRIPSPreScanSelector::Begin(TTree *tree)
     }
 }
 
-void eurica::BigRIPSPreScanSelector::SlaveBegin(TTree *tree)
+void eurica::WasabiPreScanSelector::SlaveBegin(TTree *tree)
 {
     // SlaveBegin() is called only in the worker process when it runs on PROOF.
     // If it's not on PROOF, SlaveBegin() is called after Begin()
@@ -65,9 +65,34 @@ void eurica::BigRIPSPreScanSelector::SlaveBegin(TTree *tree)
                     output_file_name_ = named->GetTitle();
             }
             {
-                TNamed *named = (TNamed *)fInput->FindObject("InputPIDFileName");
+                TNamed *named = (TNamed *)fInput->FindObject("EXFileName");
                 if (named)
-                    input_pidfile_name_ = named->GetTitle();
+                    ex_file_name_ = named->GetTitle();
+            }
+            {
+                TNamed *named = (TNamed *)fInput->FindObject("EYFileName");
+                if (named)
+                    ey_file_name_ = named->GetTitle();
+            }
+            {
+                TNamed *named = (TNamed *)fInput->FindObject("TXFileName");
+                if (named)
+                    tx_file_name_ = named->GetTitle();
+            }
+            {
+                TNamed *named = (TNamed *)fInput->FindObject("TYFileName");
+                if (named)
+                    ty_file_name_ = named->GetTitle();
+            }
+            {
+                TNamed *named = (TNamed *)fInput->FindObject("SlewXFileName");
+                if (named)
+                    slewx_file_name_ = named->GetTitle();
+            }
+            {
+                TNamed *named = (TNamed *)fInput->FindObject("SlewYFileName");
+                if (named)
+                    slewy_file_name_ = named->GetTitle();
             }
             TParameter<Bool_t> *merge_tree = (TParameter<Bool_t> *)fInput->FindObject("MergeTree");
             if (merge_tree)
@@ -106,20 +131,26 @@ void eurica::BigRIPSPreScanSelector::SlaveBegin(TTree *tree)
         fOutputFile = new TFile(output_file_name_.c_str(), "RECREATE");
     }
 
-    pid_vec_ = PIDGate::LoadCut(input_pidfile_name_);
     // Create an output tree.
     if (fOutputTree)
         delete fOutputTree;
     fOutputTree = new TTree("OutputTree", "OutputTree");
-    fOutputTree->Branch("BigRIPSData", "BigRIPSData", &output_data_);
+    fOutputTree->Branch("WasabiData", "WasabiData", &output_data_);
     fOutputTree->SetDirectory(fOutputFile);
     fOutputTree->AutoSave();
 
     // Recover the current directory.
     gDirectory = savedir;
+
+    calib_ex_ = new GACalibManager(ex_file_name_, kNX * kNLayer);
+    calib_ey_ = new GACalibManager(ey_file_name_, kNY * kNLayer);
+    calib_tx_ = new GACalibManager(tx_file_name_, kNX * kNLayer);
+    calib_ty_ = new GACalibManager(ty_file_name_, kNY * kNLayer);
+    slew_x_ = new GASlewCorrectionManager(slewx_file_name_, kNX * kNLayer);
+    slew_y_ = new GASlewCorrectionManager(slewy_file_name_, kNY * kNLayer);
 }
 
-void eurica::BigRIPSPreScanSelector::Init(TTree *tree)
+void eurica::WasabiPreScanSelector::Init(TTree *tree)
 {
     // Init() is called when the selector needs to initialize a new tree
     // According to the ROOT documentation, the tree argument of the Begin()
@@ -128,31 +159,59 @@ void eurica::BigRIPSPreScanSelector::Init(TTree *tree)
     tree_reader_.SetTree(tree);
 }
 
-Bool_t eurica::BigRIPSPreScanSelector::Process(Long64_t entry)
+Bool_t eurica::WasabiPreScanSelector::Process(Long64_t entry)
 {
     // Process() is called for each entry in the tree.
     // This function should contain the body of the analysis.
 
     tree_reader_.SetLocalEntry(entry);
+    output_data_.Clear();
 
-    if (aoq_.GetSize() < 3 || zet_.GetSize() < 2 || ts_.GetSize() < 1)
-        return kTRUE;
-
+    for (int i_layer = 0; i_layer < kNLayer; i_layer++)
     {
-        // fill pid number (0 if not in any gates)
-        output_data_.pid_ = 0;
-        Int_t id = 0;
-        for (const auto &gate : pid_vec_)
+        for (int i_x = 0; i_x < kNX; i_x++)
         {
-            ++id;
-            if (gate.IsInside(aoq_[0], zet_[1]))
+            Double_t hit_time = calib_tx_->GCalib(
+                i_x + i_layer * kNX, dssdT_[(i_layer * (kNX + kNY) + i_x) * kNHit]);
+            hit_time = slew_x_->SlewCorrect(
+                i_layer * kNX + i_x,
+                hit_time,
+                dssdE_[i_layer * (kNX + kNY) + i_x]);
+            Double_t hit_energy = calib_ex_->GCalib(
+                i_x + i_layer * kNX, dssdE_[i_layer * (kNX + kNY) + i_x]);
+            if (hit_time > kTDCThreshold)
             {
-                output_data_.pid_ = id;
+                auto hit = new WasabiHitData();
+                hit->energy_ = hit_energy;
+                hit->time_ = hit_time;
+                hit->layer_ = i_layer;
+                hit->id_ = i_x;
+                output_data_.x_.emplace_back(hit);
+            }
+        }
+        for (int i_y = 0; i_y < kNY; i_y++)
+        {
+            Double_t hit_time = calib_ty_->GCalib(
+                i_y + i_layer * kNY,
+                dssdT_[(i_layer * (kNX + kNY) + i_y + kNX) * kNHit]);
+            hit_time = slew_y_->SlewCorrect(
+                i_layer * kNY + i_y,
+                hit_time,
+                dssdE_[i_layer * (kNX + kNY) + i_y + kNX]);
+            Double_t hit_energy = calib_ey_->GCalib(
+                i_y + i_layer * kNY,
+                dssdE_[i_layer * (kNX + kNY) + i_y + kNX]);
+            if (hit_time > kTDCThreshold)
+            {
+                auto hit = new WasabiHitData();
+                hit->energy_ = hit_energy;
+                hit->time_ = hit_time;
+                hit->layer_ = i_layer;
+                hit->id_ = i_y;
+                output_data_.y_.emplace_back(hit);
             }
         }
     }
-    output_data_.aoq_ = aoq_[0];
-    output_data_.zet_ = zet_[1];
     output_data_.ts_ = ts_[0];
     output_data_.evtnumber_ = evtnumber_[0];
     output_data_.runnumber_ = runnumber_[0];
@@ -163,7 +222,7 @@ Bool_t eurica::BigRIPSPreScanSelector::Process(Long64_t entry)
     return kTRUE;
 }
 
-void eurica::BigRIPSPreScanSelector::SlaveTerminate()
+void eurica::WasabiPreScanSelector::SlaveTerminate()
 {
     // SlaveTerminate() is called after all entries have been processed.
     // This function is called only in the worker process.
@@ -190,7 +249,7 @@ void eurica::BigRIPSPreScanSelector::SlaveTerminate()
     fOutputFile = nullptr;
 }
 
-void eurica::BigRIPSPreScanSelector::Terminate()
+void eurica::WasabiPreScanSelector::Terminate()
 {
     // Terminate() is called only in the client process
 

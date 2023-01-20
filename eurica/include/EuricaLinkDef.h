@@ -14,11 +14,18 @@
 #pragma link C++ class eurica::Data_eurica + ;
 #pragma link C++ class eurica::Data_wasabi + ;
 #pragma link C++ class eurica::BigRIPSData + ;
+#pragma link C++ class eurica::WasabiHitData + ;
+#pragma link C++ class eurica::WasabiData + ;
+#pragma link C++ class std::vector < eurica::BigRIPSData *> + ;
+#pragma link C++ class std::vector < eurica::WasabiHitData *> + ;
+#pragma link C++ class std::vector < eurica::WasabiData *> + ;
 #pragma link C++ class std::vector < eurica::Data_bigrips *> + ;
 #pragma link C++ class std::vector < eurica::Data_eurica *> + ;
 #pragma link C++ class std::vector < eurica::Data_wasabi *> + ;
 #pragma link C++ class std::vector < eurica::BigRIPSData *> + ;
 
 #pragma link C++ class eurica::BigRIPSPreScanSelector + ;
+#pragma link C++ class eurica::WasabiPreScanSelector + ;
+#pragma link C++ class eurica::EuricaPreScanSelector + ;
 
 #endif
