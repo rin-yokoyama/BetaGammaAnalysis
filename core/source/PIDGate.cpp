@@ -104,12 +104,13 @@ const std::vector<PIDGate> PIDGate::LoadCut(std::string icutname, TList *outputL
         {
             std::string isoname;
             fcut >> isoname;
-            Double_t ellipse_a, ellipse_b, ellipse_x0, ellipse_y0;
-            fcut >> ellipse_a;
-            fcut >> ellipse_b;
+            Double_t ellipse_a, ellipse_b, ellipse_x0, ellipse_y0, radius;
             fcut >> ellipse_x0;
             fcut >> ellipse_y0;
-            vectorIsotopes.push_back(PIDGate(isoname, ellipse_a, ellipse_b, ellipse_x0, ellipse_y0, outputList));
+            fcut >> ellipse_a;
+            fcut >> ellipse_b;
+            fcut >> radius;
+            vectorIsotopes.push_back(PIDGate(isoname, ellipse_a / radius, ellipse_b / radius, ellipse_x0, ellipse_y0, outputList));
         }
         fcut.close();
     }
