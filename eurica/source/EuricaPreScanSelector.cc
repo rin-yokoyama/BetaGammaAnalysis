@@ -14,10 +14,10 @@
 ClassImp(eurica::EuricaPreScanSelector)
 
     eurica::EuricaPreScanSelector::EuricaPreScanSelector(TTree *tree) : tree_reader_(tree),
-                                                                        vme1_2_(tree_reader_, "UnpackEvent.vme1_2"),
-                                                                        vme4_5_(tree_reader_, "UnpackEvent.vme4_5"),
-                                                                        vme6_(tree_reader_, "UnpackEvent.vme6"),
-                                                                        vmel_(tree_reader_, "UnpackEvent.vmel"),
+                                                                        // vme1_2_(tree_reader_, "UnpackEvent.vme1_2[32]"),
+                                                                        // vme4_5_(tree_reader_, "UnpackEvent.vme4_5[30][4][2]"),
+                                                                        // vme6_(tree_reader_, "UnpackEvent.vme6[4][32]"),
+                                                                        // vmel_(tree_reader_, "UnpackEvent.vmel[128][3]"),
                                                                         ts_(tree_reader_, "EventInfo.timestamp"),
                                                                         evtnumber_(tree_reader_, "EventInfo.eventnumber"),
                                                                         runnumber_(tree_reader_, "EventInfo.runnumber"),
@@ -137,7 +137,7 @@ void eurica::EuricaPreScanSelector::SlaveBegin(TTree *tree)
     if (fOutputTree)
         delete fOutputTree;
     fOutputTree = new TTree("OutputTree", "OutputTree");
-    fOutputTree->Branch("EuricaData", "EuricaData", &output_data_);
+    fOutputTree->Branch("ClusterData", "ClusterData", &output_data_);
     fOutputTree->SetDirectory(fOutputFile);
     fOutputTree->AutoSave();
 
@@ -150,6 +150,12 @@ void eurica::EuricaPreScanSelector::SlaveBegin(TTree *tree)
     calib_labr_t_ = new GACalibManager(labr_tcal_file_name_, kNLabr);
     slew_ge_ = new GASlewCorrectionManager(ge_slew_file_name_, kNDetector * kNCrystal);
     slew_labr_ = new GASlewCorrectionManager(labr_slew_file_name_, kNLabr);
+
+    const auto itree = tree_reader_.GetTree();
+    itree->SetBranchAddress("UnpackEvent.vme1_2[32]", vme1_2_);
+    itree->SetBranchAddress("UnpackEvent.vme4_5[30][4][2]", vme4_5_);
+    itree->SetBranchAddress("UnpackEvent.vme6[4][32]", vme6_);
+    itree->SetBranchAddress("UnpackEvent.vmel[128][3]", vmel_);
 }
 
 void eurica::EuricaPreScanSelector::Init(TTree *tree)
@@ -167,6 +173,7 @@ Bool_t eurica::EuricaPreScanSelector::Process(Long64_t entry)
     // This function should contain the body of the analysis.
 
     tree_reader_.SetLocalEntry(entry);
+    tree_reader_.GetTree()->GetEntry(tree_reader_.GetCurrentEntry());
     output_data_.Clear();
 
     // mapping cluster
@@ -180,7 +187,10 @@ Bool_t eurica::EuricaPreScanSelector::Process(Long64_t entry)
             for (int j = 0; j < 4; j++)
             {
                 for (int k = 0; k < 2; k++)
-                    fvme4_5[i][j][k] = vme4_5_[4 * 2 * i + j * 2 + k];
+                {
+                    // fvme4_5[i][j][k] = vme4_5_[4 * 2 * i + j * 2 + k];
+                    fvme4_5[i][j][k] = vme4_5_[i][j][k];
+                }
             }
         }
         // Energy
@@ -449,6 +459,7 @@ Bool_t eurica::EuricaPreScanSelector::Process(Long64_t entry)
         adc[17] = vme1_2_[17];
 
         // STDC time
+        /*
         // Cluster A
         stdc[0] = vme6_[3 * 32 + 0];
         stdc[1] = vme6_[3 * 32 + 1];
@@ -472,6 +483,30 @@ Bool_t eurica::EuricaPreScanSelector::Process(Long64_t entry)
         stdc[15] = vme6_[3 * 32 + 15];
         stdc[16] = vme6_[3 * 32 + 16];
         stdc[17] = vme6_[3 * 32 + 17];
+        */
+        // Cluster A
+        stdc[0] = vme6_[3][0];
+        stdc[1] = vme6_[3][1];
+        stdc[2] = vme6_[3][2];
+        stdc[3] = vme6_[3][3];
+        stdc[4] = vme6_[3][4];
+        stdc[5] = vme6_[3][5];
+
+        // Cluster B
+        stdc[6] = vme6_[3][6];
+        stdc[7] = vme6_[3][7];
+        stdc[8] = vme6_[3][8];
+        stdc[9] = vme6_[3][9];
+        stdc[10] = vme6_[3][10];
+        stdc[11] = vme6_[3][11];
+
+        // Cluster C
+        stdc[12] = vme6_[3][12];
+        stdc[13] = vme6_[3][13];
+        stdc[14] = vme6_[3][14];
+        stdc[15] = vme6_[3][15];
+        stdc[16] = vme6_[3][16];
+        stdc[17] = vme6_[3][17];
 
         for (int i_ch = 0; i_ch < kNLabr; ++i_ch)
         {
@@ -508,10 +543,16 @@ Bool_t eurica::EuricaPreScanSelector::Process(Long64_t entry)
         adc[7] = vme1_2_[25]; // DR_L
 
         // STDC time
+        /*
         stdc[0] = vme6_[3 * 32 + 18]; // UL
         stdc[1] = vme6_[3 * 32 + 19]; // UR
         stdc[2] = vme6_[3 * 32 + 20]; // DL
         stdc[3] = vme6_[3 * 32 + 21]; // DR
+        */
+        stdc[0] = vme6_[3][18]; // UL
+        stdc[1] = vme6_[3][19]; // UR
+        stdc[2] = vme6_[3][20]; // DL
+        stdc[3] = vme6_[3][21]; // DR
 
         for (int i = 0; i < kNBetaPL; ++i)
         {

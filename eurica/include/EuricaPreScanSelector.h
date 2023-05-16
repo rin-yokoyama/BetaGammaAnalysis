@@ -69,14 +69,19 @@ protected:
     static const Int_t kNDetector = 12;
     static const Int_t kNCrystal = 7;
     static const Int_t kNLabr = 7;
-    TTreeReader tree_reader_;           // TTreeReader for the input tree
-    TTreeReaderArray<Int_t> vme1_2_;    // TTreeReaderArray for the input AoQ branch
-    TTreeReaderArray<Int_t> vme4_5_;    // TTreeReaderArray for the input AoQ branch
-    TTreeReaderArray<Int_t> vme6_;      // TTreeReaderArray for the input Zet branch
-    TTreeReaderArray<Int_t> vmel_;      // TTreeReaderArray for the input Zet branch
+    static const Int_t kNBetaPL = 4;
+    TTreeReader tree_reader_; // TTreeReader for the input tree
+    // TTreeReaderArray<Int_t> vme1_2_;             // TTreeReaderArray for the input AoQ branch
+    // TTreeReaderValue<Int_t*> vme4_5_; // TTreeReaderArray for the input AoQ branch
+    // TTreeReaderArray<Int_t> vme6_;               // TTreeReaderArray for the input Zet branch
+    // TTreeReaderArray<Int_t> vmel_;               // TTreeReaderArray for the input Zet branch
     TTreeReaderArray<ULong64_t> ts_;    // TTreeReaderArray for the input timestamp branch
     TTreeReaderArray<Int_t> evtnumber_; // TTreeReaderArray for the input event number branch
     TTreeReaderArray<Int_t> runnumber_; // TTreeReaderArray for the input runnumber branch
+    Int_t vme1_2_[32];
+    Int_t vme4_5_[30][4][2];
+    Int_t vme6_[4][32];
+    Int_t vmel_[128][3];
 
     GACalibManager *calib_ge_e_;
     GACalibManager *calib_ge_t_;

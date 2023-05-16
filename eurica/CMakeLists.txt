@@ -55,7 +55,10 @@ target_link_libraries(bigrips_prescan ${ROOT_LIBRARIES} BetaGammaCore ${LIB_NAME
 add_executable(wasabi_prescan source/WasabiPreScanMain.cc)
 target_link_libraries(wasabi_prescan ${ROOT_LIBRARIES} BetaGammaCore ${LIB_NAME})
 
-install(TARGETS bigrips_prescan wasabi_prescan
+add_executable(eurica_prescan source/EuricaPreScanMain.cc)
+target_link_libraries(eurica_prescan ${ROOT_LIBRARIES} BetaGammaCore ${LIB_NAME})
+
+install(TARGETS bigrips_prescan wasabi_prescan eurica_prescan
 		RUNTIME DESTINATION bin)
 
 add_subdirectory(scripts)
