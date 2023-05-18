@@ -1,44 +1,52 @@
 WasabiTSScanner:
-  InputFileName: /home/ryokoyam/data/eurica/WASABI3142.root
-  TreeName: WASABI
-  BranchName: data
+  InputFileName: /home/ryokoyam/data/eurica/wasabi_3255.root
+  TreeName: OutputTree
+  BranchName: WasabiData
 #  OtherBranches:
 #  FirstEntry: 0
 #  LastEntry: 10000
 
 EuricaTSScanner:
-  InputFileName: /home/ryokoyam/data/eurica/go4_3142.root
-  TreeName: tree
-  BranchName: EventInfo
-  OtherBranches:
-    - "UnpackEvent"
-    - "GeCluster"
-    - "GeAddback"
-    - "BetaPlasticUp"
-    - "BetaPlasticDown"
-    - "BigRIPSRaw"
+  InputFileName: /home/ryokoyam/data/eurica/eurica_3255.root
+  TreeName: OutputTree
+  BranchName: ClusterData
+#  OtherBranches:
 #  FirstEntry: 0
 #  LastEntry: 10000
 
-S2PlusTSScanner:
-  InputFileName: /home/sh13/rootfiles/test.root
-  TreeName: SH13S2PlusTree
-  PixieBranchName: SH13S2PlusData
-  PrintFrequency: 100000
-  #OtherBranches:
-  #  - "clover_vec_"
-  #  #- "event_info_"
-  #  #- "file_name"
-  #  #- "pixie_event_num"
+BigRIPSTSScanner:
+  InputFileName: /home/ryokoyam/data/eurica/bigrips_3255.root
+  TreeName: OutputTree
+  BranchName: BigRIPSData
+#  OtherBranches:
 #  FirstEntry: 0
-#  LastEntry: 1000000
+#  LastEntry: 10000
 
-Merger:
-  OutputFileName: rootfiles/merged_0083.root
-  TreeName: merged
-  BranchName: merged
-  ClassName: OutputTreeData<ULong64_t, S2PlusData>
-  TimeWindowLow: -100000
-  TimeWindowUp: 100000
+WasabiMergedTSScanner:
+  InputFileName: /home/ryokoyam/data/eurica/eurica_wasabi_3255.root
+  TreeName: OutputTree
+  BranchName: EuricaWasabi
+#  OtherBranches:
+#  FirstEntry: 0
+#  LastEntry: 10000
+
+EuricaWasabiMerger:
+  OutputFileName: /home/ryokoyam/data/eurica/eurica_wasabi_3255.root
+  TreeName: OutputTree
+  BranchName: EuricaWasabi
+  ClassName: eurica::EuricaWasabiData
+  TimeWindowLow: 1000
+  TimeWindowUp: 1000
   TimeStampScale: 1
   ScanWindow: 1E+9
+
+ImplantMerger:
+  OutputFileName: /home/ryokoyam/data/eurica/implant_3255.root
+  TreeName: OutputTree
+  BranchName: Implant
+  ClassName: eurica::ImplantData
+  TimeWindowLow: 1000
+  TimeWindowUp: 1000
+  TimeStampScale: 1
+  ScanWindow: 1E+9
+  

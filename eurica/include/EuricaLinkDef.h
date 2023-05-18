@@ -19,15 +19,21 @@
 #pragma link C++ class eurica::ClusterHitData + ;
 #pragma link C++ class eurica::ClusterData + ;
 #pragma link C++ class eurica::BetaPLData + ;
+#pragma link C++ class eurica::EuricaWasabiData + ;
+#pragma link C++ class eurica::ImplantData + ;
+#pragma link C++ class eurica::BetaData + ;
 
 #pragma link C++ class std::vector < eurica::BigRIPSData *> + ;
-#pragma link C++ class std::vector < eurica::WasabiHitData *> + ;
+#pragma link C++ class std::vector < eurica::WasabiHitData> + ;
 #pragma link C++ class std::vector < eurica::WasabiData *> + ;
-#pragma link C++ class std::vector < eurica::ClusterHitData *> + ;
+#pragma link C++ class std::vector < eurica::ClusterHitData> + ;
 #pragma link C++ class std::vector < eurica::ClusterData *> + ;
 #pragma link C++ class std::vector < eurica::Data_bigrips *> + ;
 #pragma link C++ class std::vector < eurica::Data_eurica *> + ;
 #pragma link C++ class std::vector < eurica::Data_wasabi *> + ;
+#pragma link C++ class std::vector < eurica::EuricaWasabiData *> + ;
+#pragma link C++ class std::vector < eurica::ImplantData *> + ;
+#pragma link C++ class std::vector < eurica::BetaData *> + ;
 
 #pragma link C++ class eurica::BigRIPSPreScanSelector + ;
 #pragma link C++ class eurica::WasabiPreScanSelector + ;

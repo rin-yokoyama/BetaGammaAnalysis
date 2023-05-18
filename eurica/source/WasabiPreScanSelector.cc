@@ -181,11 +181,17 @@ Bool_t eurica::WasabiPreScanSelector::Process(Long64_t entry)
                 i_x + i_layer * kNX, dssdE_[i_layer * (kNX + kNY) + i_x]);
             if (hit_time > kTDCThreshold)
             {
-                auto hit = new WasabiHitData();
-                hit->energy_ = hit_energy;
-                hit->time_ = hit_time;
-                hit->layer_ = i_layer;
-                hit->id_ = i_x;
+                // auto hit = new WasabiHitData();
+                // hit->energy_ = hit_energy;
+                // hit->time_ = hit_time;
+                // hit->layer_ = i_layer;
+                // hit->id_ = i_x;
+                // output_data_.x_.emplace_back(hit);
+                WasabiHitData hit;
+                hit.energy_ = hit_energy;
+                hit.time_ = hit_time;
+                hit.layer_ = i_layer;
+                hit.id_ = i_x;
                 output_data_.x_.emplace_back(hit);
             }
         }
@@ -203,11 +209,17 @@ Bool_t eurica::WasabiPreScanSelector::Process(Long64_t entry)
                 dssdE_[i_layer * (kNX + kNY) + i_y + kNX]);
             if (hit_time > kTDCThreshold)
             {
-                auto hit = new WasabiHitData();
-                hit->energy_ = hit_energy;
-                hit->time_ = hit_time;
-                hit->layer_ = i_layer;
-                hit->id_ = i_y;
+                // auto hit = new WasabiHitData();
+                // hit->energy_ = hit_energy;
+                // hit->time_ = hit_time;
+                // hit->layer_ = i_layer;
+                // hit->id_ = i_y;
+                // output_data_.y_.emplace_back(hit);
+                WasabiHitData hit;
+                hit.energy_ = hit_energy;
+                hit.time_ = hit_time;
+                hit.layer_ = i_layer;
+                hit.id_ = i_y;
                 output_data_.y_.emplace_back(hit);
             }
         }

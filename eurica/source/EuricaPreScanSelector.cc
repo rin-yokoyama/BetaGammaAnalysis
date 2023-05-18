@@ -408,11 +408,16 @@ Bool_t eurica::EuricaPreScanSelector::Process(Long64_t entry)
                 {
                     if (dgf[i_det][i_cry] > 0 && fvme4_5[7][3][1] > 0)
                     {
-                        auto hit = new ClusterHitData();
-                        hit->det_id_ = i_det;
-                        hit->crystal_id_ = i_cry;
-                        hit->energy_ = adc[i_det][i_cry];
-                        hit->time_ = dgf[i_det][i_cry] - fvme4_5[7][3][1];
+                        // auto hit = new ClusterHitData();
+                        // hit->det_id_ = i_det;
+                        // hit->crystal_id_ = i_cry;
+                        // hit->energy_ = adc[i_det][i_cry];
+                        // hit->time_ = dgf[i_det][i_cry] - fvme4_5[7][3][1];
+                        ClusterHitData hit;
+                        hit.det_id_ = i_det;
+                        hit.crystal_id_ = i_cry;
+                        hit.energy_ = adc[i_det][i_cry];
+                        hit.time_ = dgf[i_det][i_cry] - fvme4_5[7][3][1];
                         output_data_.singles_.emplace_back(hit);
                     }
                 }
@@ -420,11 +425,14 @@ Bool_t eurica::EuricaPreScanSelector::Process(Long64_t entry)
         }
 
         // Cluster calibration
-        for (const auto &hit : output_data_.singles_)
+        for (auto &hit : output_data_.singles_)
         {
-            hit->energy_ = calib_ge_e_->GCalib(kNCrystal * hit->det_id_ + hit->crystal_id_, hit->energy_);
-            hit->time_ = calib_ge_t_->GCalib(kNCrystal * hit->det_id_ + hit->crystal_id_, hit->time_);
-            hit->time_ = slew_ge_->SlewCorrect(kNCrystal * hit->det_id_ + hit->crystal_id_, hit->time_, hit->energy_);
+            // hit->energy_ = calib_ge_e_->GCalib(kNCrystal * hit->det_id_ + hit->crystal_id_, hit->energy_);
+            // hit->time_ = calib_ge_t_->GCalib(kNCrystal * hit->det_id_ + hit->crystal_id_, hit->time_);
+            // hit->time_ = slew_ge_->SlewCorrect(kNCrystal * hit->det_id_ + hit->crystal_id_, hit->time_, hit->energy_);
+            hit.energy_ = calib_ge_e_->GCalib(kNCrystal * hit.det_id_ + hit.crystal_id_, hit.energy_);
+            hit.time_ = calib_ge_t_->GCalib(kNCrystal * hit.det_id_ + hit.crystal_id_, hit.time_);
+            hit.time_ = slew_ge_->SlewCorrect(kNCrystal * hit.det_id_ + hit.crystal_id_, hit.time_, hit.energy_);
         }
     }
 
@@ -512,18 +520,26 @@ Bool_t eurica::EuricaPreScanSelector::Process(Long64_t entry)
         {
             if (adc[i_ch] > 0 && adc[i_ch] < 65535)
             {
-                auto hit = new ClusterHitData();
-                hit->crystal_id_ = 0;
-                hit->det_id_ = i_ch;
-                hit->energy_ = adc[i_ch];
-                hit->time_ = stdc[i_ch];
+                // auto hit = new ClusterHitData();
+                // hit->crystal_id_ = 0;
+                // hit->det_id_ = i_ch;
+                // hit->energy_ = adc[i_ch];
+                // hit->time_ = stdc[i_ch];
+                ClusterHitData hit;
+                hit.crystal_id_ = 0;
+                hit.det_id_ = i_ch;
+                hit.energy_ = adc[i_ch];
+                hit.time_ = stdc[i_ch];
                 output_data_.labr_.emplace_back(hit);
             }
         }
 
         // Calibration
-        for (const auto &hit : output_data_.labr_)
+        for (auto &hit : output_data_.labr_)
         {
+            hit.energy_ = calib_labr_e_->GCalib(hit.det_id_, hit.energy_);
+            hit.time_ = calib_labr_t_->GCalib(hit.det_id_, hit.time_);
+            hit.time_ = slew_labr_->SlewCorrect(hit.det_id_, hit.time_, hit.energy_);
         }
     }
 
@@ -556,11 +572,20 @@ Bool_t eurica::EuricaPreScanSelector::Process(Long64_t entry)
 
         for (int i = 0; i < kNBetaPL; ++i)
         {
-            auto hit = new ClusterHitData();
-            hit->energy_ = adc[i];
-            hit->time_ = stdc[i];
-            hit->det_id_ = i;
-            hit->crystal_id_ = 0;
+            // auto hit = new ClusterHitData();
+            // hit->energy_ = adc[i];
+            // hit->time_ = stdc[i];
+            // hit->det_id_ = i;
+            // hit->crystal_id_ = 0;
+            ClusterHitData hit;
+            hit.energy_ = adc[i];
+            hit.time_ = stdc[i];
+            hit.det_id_ = i;
+            hit.crystal_id_ = 0;
+            output_data_.beta_pl_.hits_.emplace_back(hit);
+            output_data_.beta_pl_.energy_ = 0;
+            output_data_.beta_pl_.id_ = -1;
+            output_data_.beta_pl_.time_ = 0;
         }
     }
     output_data_.ts_ = ts_[0];

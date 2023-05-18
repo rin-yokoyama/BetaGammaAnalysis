@@ -4,9 +4,9 @@ const std::string eurica::EuricaTSScanner::kMsgPrefix("[EuricaTSScanner]:");
 
 void eurica::EuricaTSScanner::SetReader()
 {
-    TSScannerBase<eurica::Data_eurica>::SetReader();
+    TSScannerBase<eurica::ClusterData>::SetReader();
     std::string br_name = yaml_reader_->GetString("BranchName");
-    tree_data_ = new TTreeReaderValue<eurica::Data_eurica>(*tree_reader_, br_name.c_str());
+    tree_data_ = new TTreeReaderValue<eurica::ClusterData>(*tree_reader_, br_name.c_str());
     std::cout << kMsgPrefix << "TreeReaderValue: " << br_name << " created." << std::endl;
     return;
 }

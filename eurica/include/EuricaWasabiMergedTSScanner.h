@@ -1,20 +1,20 @@
-#ifndef __EURICA_WASABI_TSSCANNER_H__
-#define __EURICA_WASABI_TSSCANNER_H__
+#ifndef __EURICA_WASABI_MERGED_TSSCANNER_H__
+#define __EURICA_WASABI_MERGED_TSSCANNER_H__
 
 #include "TSScannerBase.hpp"
 #include "EuricaMergerData.hpp"
 
 namespace eurica
 {
-	class WasabiTSScanner;
+	class WasabiMergedTSScanner;
 }
 
-class eurica::WasabiTSScanner : public TSScannerBase<eurica::WasabiData>
+class eurica::WasabiMergedTSScanner : public TSScannerBase<eurica::EuricaWasabiData>
 {
 public:
 	const static std::string kMsgPrefix;
-	WasabiTSScanner() {}
-	virtual ~WasabiTSScanner() {}
+	WasabiMergedTSScanner() {}
+	virtual ~WasabiMergedTSScanner() {}
 	void SetReader();
 	virtual Bool_t IsInGate();
 
@@ -25,7 +25,7 @@ protected:
 			throw kMsgPrefix + "In GetTS(), tree_data_ is null";
 		if (!tree_data_->Get())
 			throw kMsgPrefix + "In GetTS(), tree_data_->Get() returned null";
-		return tree_data_->Get()->ts_;
+		return tree_data_->Get()->input_.ts_;
 	}
 };
-#endif /// __EURICA_WASABI_TSSCANNER_H__
+#endif /// __EURICA_WASABI_MERGED_TSSCANNER_H__

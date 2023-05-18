@@ -11,6 +11,7 @@
 #ifndef __EURICA_MERGER_DATA_HPP__
 #define __EURICA_MERGER_DATA_HPP__
 
+#include "TObject.h"
 #include "OutputTreeData.hpp"
 #include "Data_bigrips.h"
 #include "Data_wasabi.h"
@@ -24,19 +25,17 @@ namespace eurica
     class ClusterHitData;
     class BetaPLData;
     class ClusterData;
-    // typedef OutputTreeData<eurica::Data_wasabi, eurica::Data_eurica> WasabiData;
-    // typedef OutputTreeData<WasabiData, eurica::Data_bigrips> BigRIPSData;
-    // typedef OutputTreeData<BigRIPSData, BigRIPSData> MergedData;
-    // using WasabiData = OutputTreeData<eurica::Data_wasabi, eurica::Data_eurica>;
-    // using MergedData = OutputTreeData<WasabiData, eurica::Data_bigrips>;
-    // using BetaMergedData = OutputTreeData<MergedData, MergedData>;
+
+    typedef OutputTreeData<eurica::WasabiData, eurica::ClusterData> EuricaWasabiData;
+    typedef OutputTreeData<eurica::BigRIPSData, eurica::EuricaWasabiData> ImplantData;
+    typedef OutputTreeData<eurica::EuricaWasabiData, eurica::ImplantData> BetaData;
 }
 
 /**
  * @brief Data container class for a BigRIPS event
  *
  */
-class eurica::BigRIPSData
+class eurica::BigRIPSData //: public TObject
 {
 public:
     BigRIPSData() : pid_(0), aoq_(0), zet_(0), ts_(0), evtnumber_(0), runnumber_(0){};
@@ -57,9 +56,10 @@ public:
     ULong64_t ts_;
     ULong64_t evtnumber_;
     Int_t runnumber_;
+    // ClassDef(eurica::BigRIPSData, 2)
 };
 
-class eurica::WasabiHitData
+class eurica::WasabiHitData //: public TObject
 {
 public:
     WasabiHitData() : energy_(0), time_(0), layer_(0), id_(0) {}
@@ -76,8 +76,9 @@ public:
     Double_t time_;
     Int_t layer_;
     Int_t id_;
+    // ClassDef(eurica::WasabiHitData, 2)
 };
-class eurica::WasabiData
+class eurica::WasabiData //: public TObject
 {
 public:
     WasabiData() : ts_(0), evtnumber_(0), runnumber_(0){};
@@ -97,17 +98,18 @@ public:
         y_.clear();
     }
 
-    std::vector<WasabiHitData *> x_;
-    std::vector<WasabiHitData *> y_;
+    std::vector<WasabiHitData> x_;
+    std::vector<WasabiHitData> y_;
     ULong64_t ts_;
     ULong64_t evtnumber_;
     Int_t runnumber_;
+    // ClassDef(eurica::WasabiData, 2)
 };
 
-class eurica::ClusterHitData
+class eurica::ClusterHitData //: public TObject
 {
 public:
-    ClusterHitData() {}
+    ClusterHitData() : energy_(0), time_(0), det_id_(-1), crystal_id_(-1) {}
     ClusterHitData(const ClusterHitData &rhs)
     {
         energy_ = rhs.energy_;
@@ -121,24 +123,26 @@ public:
     Double_t time_;
     Int_t det_id_;
     Int_t crystal_id_;
+    // ClassDef(eurica::ClusterHitData, 2)
 };
 
-class eurica::BetaPLData
+class eurica::BetaPLData //: public TObject
 {
 public:
-    BetaPLData() {}
+    BetaPLData() : energy_(0), time_(0), id_(-1) {}
     BetaPLData(const BetaPLData &rhs) {}
     virtual ~BetaPLData() {}
 
-    std::vector<ClusterHitData *> hits_;
+    std::vector<ClusterHitData> hits_;
     Double_t energy_;
     Double_t time_;
     Int_t id_;
+    // ClassDef(eurica::BetaPLData, 2)
 };
-class eurica::ClusterData
+class eurica::ClusterData //: public TObject
 {
 public:
-    ClusterData() {}
+    ClusterData() : ts_(0), evtnumber_(0), runnumber_(0) {}
     ClusterData(const ClusterData &rhs)
     {
         singles_ = rhs.singles_;
@@ -153,13 +157,21 @@ public:
         addback_.clear();
         labr_.clear();
     }
-    std::vector<ClusterHitData *> singles_;
-    std::vector<ClusterHitData *> addback_;
-    std::vector<ClusterHitData *> labr_;
+    std::vector<ClusterHitData> singles_;
+    std::vector<ClusterHitData> addback_;
+    std::vector<ClusterHitData> labr_;
     BetaPLData beta_pl_;
     ULong64_t ts_;
     ULong64_t evtnumber_;
     Int_t runnumber_;
+    // ClassDef(eurica::ClusterData, 2)
 };
-
+/*
+ClassImp(eurica::BetaPLData)
+    ClassImp(eurica::ClusterData)
+        ClassImp(eurica::ClusterHitData)
+            ClassImp(eurica::WasabiData)
+                ClassImp(eurica::WasabiHitData)
+                    ClassImp(eurica::BigRIPSData)
+                    */
 #endif //__EURICA_MERGER_DATA_HPP__
