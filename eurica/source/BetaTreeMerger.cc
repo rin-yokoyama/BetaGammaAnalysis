@@ -45,6 +45,8 @@ bool eurica::BetaTreeMerger::IsInGate(const eurica::ImplantData &in1, const euri
         return false;
 
     const auto implant = CalculateImplantPosition(wasabi_implant);
+    if (implant.layer_ < 0)
+        return false;
     const auto beta = CalculateBetaPosition(wasabi_beta);
 
     if (std::any_of(beta.begin(), beta.end(), [&implant](const WasabiHit &x)
@@ -56,6 +58,8 @@ bool eurica::BetaTreeMerger::IsInGate(const eurica::ImplantData &in1, const euri
 
 eurica::WasabiHit eurica::BetaTreeMerger::CalculateImplantPosition(const eurica::WasabiData &data)
 {
+    eurica::WasabiHit implant;
+
     // searching for the eariest x and y of the 1st layer
     const Double_t EThresh = 3800;
     const Double_t TThresh = -10000;
@@ -70,6 +74,9 @@ eurica::WasabiHit eurica::BetaTreeMerger::CalculateImplantPosition(const eurica:
     std::copy_if(data.x_.begin(), data.x_.end(), std::back_inserter(filteredX), filterFunc);
     std::copy_if(data.y_.begin(), data.y_.end(), std::back_inserter(filteredY), filterFunc);
 
+    if (filteredX.empty() || filteredY.empty())
+        return implant;
+
     // sort hits by time
     auto sortFunc = [](const eurica::WasabiHitData &a, const eurica::WasabiHitData &b)
     {
@@ -78,7 +85,6 @@ eurica::WasabiHit eurica::BetaTreeMerger::CalculateImplantPosition(const eurica:
     std::sort(filteredX.begin(), filteredX.end(), sortFunc);
     std::sort(filteredY.begin(), filteredY.end(), sortFunc);
 
-    eurica::WasabiHit implant;
     implant.x_ = filteredX.at(0).id_;
     implant.y_ = filteredY.at(0).id_;
 

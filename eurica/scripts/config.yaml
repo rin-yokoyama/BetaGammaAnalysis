@@ -75,7 +75,7 @@ BetaTreeMerger:
   TimeWindowLow: 1000000000
   TimeWindowUp: 1000000000
   TimeStampScale: 1
-  ScanWindow: 1E+9
+  ScanWindow: 100
   FillEmpty: False
   CorrelationRadius: 1.0
   
