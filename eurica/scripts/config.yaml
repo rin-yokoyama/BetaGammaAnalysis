@@ -67,7 +67,7 @@ ImplantMerger:
   ScanWindow: 1E+9
   FillEmpty: True
 
-BetaMerger:
+BetaTreeMerger:
   OutputFileName: /home/ryokoyam/data/eurica/beta_3255.root
   TreeName: OutputTree
   BranchName: Beta

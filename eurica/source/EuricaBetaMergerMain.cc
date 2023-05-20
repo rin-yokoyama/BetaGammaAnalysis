@@ -88,7 +88,7 @@ int main(int argc, char **argv)
 
             /** runs merger **/
             eurica::BetaTreeMerger beta_merger(&beta_ts_scanner, &implant_ts_scanner);
-            beta_merger.Configure("BetaMerger");
+            beta_merger.Configure("BetaTreeMerger");
             beta_merger.Merge();
             beta_merger.Write();
 
