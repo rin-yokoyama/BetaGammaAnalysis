@@ -30,6 +30,22 @@ WasabiMergedTSScanner:
 #  FirstEntry: 0
 #  LastEntry: 10000
 
+ImplantTSScanner:
+  InputFileName: /home/ryokoyam/data/eurica/implant_3255.root
+  TreeName: OutputTree
+  BranchName: Implant
+#  OtherBranches:
+#  FirstEntry: 0
+#  LastEntry: 10000
+
+BetaTSScanner:
+  InputFileName: /home/ryokoyam/data/eurica/implant_3255.root
+  TreeName: OutputTree
+  BranchName: Implant
+#  OtherBranches:
+#  FirstEntry: 0
+#  LastEntry: 10000
+
 EuricaWasabiMerger:
   OutputFileName: /home/ryokoyam/data/eurica/eurica_wasabi_3255.root
   TreeName: OutputTree
@@ -50,4 +66,16 @@ ImplantMerger:
   TimeStampScale: 1
   ScanWindow: 1E+9
   FillEmpty: True
+
+BetaMerger:
+  OutputFileName: /home/ryokoyam/data/eurica/beta_3255.root
+  TreeName: OutputTree
+  BranchName: Beta
+  ClassName: eurica::BetaData
+  TimeWindowLow: 1000000000
+  TimeWindowUp: 1000000000
+  TimeStampScale: 1
+  ScanWindow: 1E+9
+  FillEmpty: False
+  CorrelationRadius: 1.0
   

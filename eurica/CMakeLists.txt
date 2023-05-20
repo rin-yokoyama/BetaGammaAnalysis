@@ -25,9 +25,9 @@ add_library( ${LIB_NAME} SHARED
 	source/EuricaTSScanner.cc
 	source/WasabiTSScanner.cc
 	source/WasabiMergedTSScanner.cc
-	#source/BetaTSScanner.cc
-	#source/ImplantTSScanner.cc
-	#source/BetaTreeMerger.cc
+	source/BetaTSScanner.cc
+	source/ImplantTSScanner.cc
+	source/BetaTreeMerger.cc
 )
 
 target_link_libraries(${LIB_NAME} ${ROOT_LIBRARIES} yaml-cpp BetaGammaCore)
@@ -61,7 +61,10 @@ target_link_libraries(eurica_prescan ${ROOT_LIBRARIES} BetaGammaCore ${LIB_NAME}
 add_executable(eurica_premerger source/EuricaPreMergerMain.cc)
 target_link_libraries(eurica_premerger ${ROOT_LIBRARIES} BetaGammaCore ${LIB_NAME})
 
-install(TARGETS bigrips_prescan wasabi_prescan eurica_prescan eurica_premerger
+add_executable(eurica_merger source/EuricaBetaMergerMain.cc)
+target_link_libraries(eurica_merger ${ROOT_LIBRARIES} BetaGammaCore ${LIB_NAME})
+
+install(TARGETS bigrips_prescan wasabi_prescan eurica_prescan eurica_premerger eurica_merger
 		RUNTIME DESTINATION bin)
 
 add_subdirectory(scripts)
