@@ -27,8 +27,8 @@ namespace eurica
     class ClusterData;
 
     typedef OutputTreeData<eurica::WasabiData, eurica::ClusterData> EuricaWasabiData;
-    typedef OutputTreeData<eurica::BigRIPSData, eurica::EuricaWasabiData> ImplantData;
-    typedef OutputTreeData<eurica::EuricaWasabiData, eurica::ImplantData> BetaData;
+    typedef OutputTreeData<eurica::EuricaWasabiData, eurica::BigRIPSData> ImplantData;
+    typedef OutputTreeData<eurica::ImplantData, eurica::ImplantData> BetaData;
 }
 
 /**

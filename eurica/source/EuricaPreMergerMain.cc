@@ -123,7 +123,7 @@ int main(int argc, char **argv)
             std::cout << "[MergerMain]: BigRIPS map size: " << bigrips_ts_scannor.GetIEntryMap().size() << std::endl;
 
             /** runs merger **/
-            TreeMerger<eurica::ImplantData, eurica::BigRIPSData, eurica::EuricaWasabiData> merger(&bigrips_ts_scannor, &merged_ts_scannor);
+            TreeMerger<eurica::ImplantData, eurica::EuricaWasabiData, eurica::BigRIPSData> merger(&merged_ts_scannor, &bigrips_ts_scannor);
             merger.Configure("ImplantMerger");
             merger.Merge();
             merger.Write();

@@ -49,4 +49,5 @@ ImplantMerger:
   TimeWindowUp: 1000
   TimeStampScale: 1
   ScanWindow: 1E+9
+  FillEmpty: True
   

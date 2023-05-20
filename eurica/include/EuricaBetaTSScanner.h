@@ -9,7 +9,7 @@ namespace eurica
 	class BetaTSScanner;
 }
 
-class eurica::BetaTSScanner : public TSScannerBase<eurica::MergedData>
+class eurica::BetaTSScanner : public TSScannerBase<eurica::ImplantData>
 {
 public:
 	const static std::string kMsgPrefix;

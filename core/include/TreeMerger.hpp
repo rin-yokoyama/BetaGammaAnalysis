@@ -51,6 +51,7 @@ protected:
 	Double_t ts_scale1_;	   // timestamp scale for input 1
 	Double_t ts_scale2_;	   // timestamp scale for input 2
 	ULong64_t print_freq_;	   // frequency to print scan progress
+	Bool_t fill_empty_;		   // flag to fill events with empty output_vec_
 	TOUT output_object_;	   // output class object
 
 	/** timestamp scannors of input trees **/
@@ -153,6 +154,9 @@ void TreeMerger<TOUT, TIN1, TIN2>::Configure(const std::string &yaml_node_name)
 	/** frequency of printing scan progress default = 10000 **/
 	print_freq_ = yaml_reader_->GetULong64("PrintFrequency", false, 10000);
 
+	/** if fill events with empty output_vec_ default = false **/
+	fill_empty_ = yaml_reader_->GetBoolean("FillEmpty", false, false);
+
 	/** SetBranchAddress for other branches **/
 	auto b_map = input_scannor_1_->GetBranchMap();
 	for (const auto &br : b_map)
@@ -228,7 +232,9 @@ void TreeMerger<TOUT, TIN1, TIN2>::Merge()
 		output_object_ = o_obj;
 
 		input_scannor_1_->GetTree()->GetEntry(entry.second);
-		if (!output_object_.output_vec_.empty())
+		if (fill_empty_)
+			tree_->Fill();
+		else if (!output_object_.output_vec_.empty())
 			tree_->Fill();
 	}
 
