@@ -78,4 +78,5 @@ BetaTreeMerger:
   ScanWindow: 100
   FillEmpty: False
   CorrelationRadius: 1.0
+  PrintFrequency: 100
   
