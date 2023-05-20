@@ -133,6 +133,14 @@ public:
     BetaPLData(const BetaPLData &rhs) {}
     virtual ~BetaPLData() {}
 
+    void Clear() 
+    {
+        hits_.clear();
+        energy_ = 0;
+        time_ = 0;
+        id_ = -1;
+    }
+
     std::vector<ClusterHitData> hits_;
     Double_t energy_;
     Double_t time_;
@@ -156,6 +164,7 @@ public:
         singles_.clear();
         addback_.clear();
         labr_.clear();
+        beta_pl_.Clear();
     }
     std::vector<ClusterHitData> singles_;
     std::vector<ClusterHitData> addback_;
