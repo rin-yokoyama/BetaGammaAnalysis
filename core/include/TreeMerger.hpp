@@ -12,7 +12,7 @@
 /**
  * @brief Base class for tree mergers
  * 		  input_2 events will be merged to a vector in input_1
- * 
+ *
  * @tparam TOUT output class type
  * @tparam TIN1 class type of input_1
  * @tparam TIN2 class type of input_2
@@ -26,9 +26,9 @@ public:
 	TreeMerger();
 	/**
 	 * @brief Construct a new Tree Merger object
-	 *        Output will be input1 events with a vector of input2 events 
-	 * @param input1 
-	 * @param input2 
+	 *        Output will be input1 events with a vector of input2 events
+	 * @param input1
+	 * @param input2
 	 * @param ts_only If true, the merger output will be TS1 with a vector of TS2
 	 *                TOUT must be OutputTreeData<ULong64_t, ULong64_t> type
 	 */
@@ -215,8 +215,10 @@ void TreeMerger<TOUT, TIN1, TIN2>::Merge()
 			t_up = 0;
 		auto it = map2->lower_bound(t_low);
 		auto last = map2->upper_bound(t_up);
-		if (it == map2->end() || it == last) // Skips if there is no correlated event.
+		if (!fill_empty_ && (it == map2->end() || it == last)) // Skips if there is no correlated event.
+		{
 			continue;
+		}
 
 		const TIN1 *input1 = input_scannor_1_->GetEntry(entry.second);
 		TOUT o_obj(input1); // initializes output object with input1 entry
