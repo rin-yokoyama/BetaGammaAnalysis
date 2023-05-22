@@ -64,7 +64,10 @@ target_link_libraries(eurica_premerger ${ROOT_LIBRARIES} BetaGammaCore ${LIB_NAM
 add_executable(eurica_merger source/EuricaBetaMergerMain.cc)
 target_link_libraries(eurica_merger ${ROOT_LIBRARIES} BetaGammaCore ${LIB_NAME})
 
-install(TARGETS bigrips_prescan wasabi_prescan eurica_prescan eurica_premerger eurica_merger
+add_executable(eurica_analysis source/RDataFrameAnalysis.cc)
+target_link_libraries(eurica_analysis ${ROOT_LIBRARIES} BetaGammaCore ${LIB_NAME})
+
+install(TARGETS bigrips_prescan wasabi_prescan eurica_prescan eurica_premerger eurica_merger eurica_analysis
 		RUNTIME DESTINATION bin)
 
 add_subdirectory(scripts)
