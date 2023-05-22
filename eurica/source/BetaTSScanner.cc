@@ -17,5 +17,13 @@ Bool_t eurica::BetaTSScanner::IsInGate()
     // skip event if bigrips data is NOT empty
     if (!data->output_vec_.empty())
         return false;
+    const auto &x_vec = data->input_.input_.x_;
+    if (!std::any_of(x_vec.begin(), x_vec.end(), [](const eurica::WasabiHitData x)
+                     { return x.layer_; }))
+        return false;
+    const auto &y_vec = data->input_.input_.y_;
+    if (!std::any_of(y_vec.begin(), y_vec.end(), [](const eurica::WasabiHitData x)
+                     { return x.layer_; }))
+        return false;
     return true;
 }
