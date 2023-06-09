@@ -44,12 +44,13 @@ int main(int argc, char **argv)
             break;
         }
     }
-    // Enable multithreading
-    ROOT::EnableImplicitMT(n_workers);
-
     YamlParameter::Create(config_file_name);
     YamlReader yaml_reader("RDataFrameAnalysisImplant");
     std::vector<std::string> files = yaml_reader.GetStringVec("InputFiles");
+    n_workers = yaml_reader.GetULong64("NWorkers");
+
+    // Enable multithreading
+    ROOT::EnableImplicitMT(n_workers);
 
     // Create RDataFrame from a tree, "exampleTree" in the "example.root" file.
     ROOT::RDataFrame d("OutputTree", files);

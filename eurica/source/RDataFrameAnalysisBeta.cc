@@ -44,24 +44,29 @@ int main(int argc, char **argv)
             break;
         }
     }
-    // Enable multithreading
-    ROOT::EnableImplicitMT(n_workers);
 
     YamlParameter::Create(config_file_name);
     YamlReader yaml_reader("RDataFrameAnalysisBeta");
     std::vector<std::string> files = yaml_reader.GetStringVec("InputFiles");
+    n_workers = yaml_reader.GetULong64("NWorkers");
+
+    // Enable multithreading
+    ROOT::EnableImplicitMT(n_workers);
 
     // Create RDataFrame from a tree, "exampleTree" in the "example.root" file.
     ROOT::RDataFrame d("OutputTree", files);
 
+    output_file_name = yaml_reader.GetString("OutputFile", false, output_file_name);
+    const int pid_gate = yaml_reader.GetULong64("PID");
+
     // Function to define Tbeta - Timplant
-    const auto tibFunction = [](const eurica::BetaData &input)
+    const auto tibFunction = [&pid_gate](const eurica::BetaData &input)
     {
         const auto &implant_vec = input.output_vec_;
         std::vector<eurica::ImplantData> gatedImplants;
 
         // Custom cut
-        const Int_t pid = 7;
+        const Int_t pid = pid_gate;
         const auto customCut = [&pid](const eurica::ImplantData &input)
         {
             return input.output_vec_.at(0).pid_ == pid;
@@ -93,6 +98,7 @@ int main(int argc, char **argv)
 
     // Process tree
     auto output = d.Define("Tib", tibFunction, {"Beta"}).Define("geE", geEFunction, {"Beta"});
+    output.Snapshot("tree", output_file_name, {"Tib", "geE"});
 
     // Fill the histogram
     // If you want to plot a value in your class, you need to first Define()
@@ -101,11 +107,9 @@ int main(int argc, char **argv)
     // Histogram definition is {"name","title",nbin,low,up} or simply "name"
     // for auto filling. (no auto filling when multithreading)
     auto hist1d = output.Histo1D({"Tib", "Tib", 1000, -1E+9, 1E+9}, "Tib");
-    auto hist2d = output.Histo2D({"Tib_vs_geE", "Tib_vs_geE", 1000, -1E+9, 1E+9, 2000, 0, 2000}, "Tib", "geE");
 
-    TFile output_file(output_file_name.c_str(), "RECREATE");
+    TFile output_file(output_file_name.c_str(), "UPDATE");
     hist1d->Write();
-    hist2d->Write();
     output_file.Close();
     return 0;
 }
