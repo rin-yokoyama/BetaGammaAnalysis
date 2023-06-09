@@ -48,7 +48,7 @@ int main(int argc, char **argv)
     ROOT::EnableImplicitMT(n_workers);
 
     YamlParameter::Create(config_file_name);
-    YamlReader yaml_reader("RDataFrameAnalysis");
+    YamlReader yaml_reader("RDataFrameAnalysisBeta");
     std::vector<std::string> files = yaml_reader.GetStringVec("InputFiles");
 
     // Create RDataFrame from a tree, "exampleTree" in the "example.root" file.
@@ -61,7 +61,7 @@ int main(int argc, char **argv)
         std::vector<eurica::ImplantData> gatedImplants;
 
         // Custom cut
-        const Int_t pid = 1;
+        const Int_t pid = 7;
         const auto customCut = [&pid](const eurica::ImplantData &input)
         {
             return input.output_vec_.at(0).pid_ == pid;
