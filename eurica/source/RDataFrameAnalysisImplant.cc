@@ -54,6 +54,8 @@ int main(int argc, char **argv)
     // Create RDataFrame from a tree, "exampleTree" in the "example.root" file.
     ROOT::RDataFrame d("OutputTree", files);
 
+    output_file_name = yaml_reader.GetString("OutputFile", false, output_file_name);
+
     // Function to gate on implant events
     const auto implantGate = [](const eurica::ImplantData &input)
     {
@@ -75,7 +77,7 @@ int main(int argc, char **argv)
     // Function to define pid gate
     const auto pid = [](const eurica::ImplantData &input)
     {
-        return input.output_vec_.at(0).zet_;
+        return input.output_vec_.at(0).pid_;
     };
 
     // Function to define gamma E
