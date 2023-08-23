@@ -111,21 +111,78 @@ int main(int argc, char **argv)
         return gammaT_vec;
     };
 
+    // Function to define crystalId
+    const auto geCrystalIdFunction = [](const eurica::ImplantData &input)
+    {
+        const auto &gamma_vec = input.input_.output_vec_;
+        std::vector<Int_t> gammaCrystalId_vec;
+        for (const auto &gamma : gamma_vec)
+        {
+            for (const auto &single : gamma.singles_)
+            {
+                gammaCrystalId_vec.emplace_back(single.crystal_id_);
+            }
+        }
+        return gammaCrystalId_vec;
+    };
+
+    // Function to define detectorId
+    const auto geDetectorIdFunction = [](const eurica::ImplantData &input)
+    {
+        const auto &gamma_vec = input.input_.output_vec_;
+        std::vector<Int_t> gammaDetectorId_vec;
+        for (const auto &gamma : gamma_vec)
+        {
+            for (const auto &single : gamma.singles_)
+            {
+                gammaDetectorId_vec.emplace_back(single.det_id_);
+            }
+        }
+        return gammaDetectorId_vec;
+    };
+
     // Process tree
     auto output = d.Filter(implantGate, {"Implant"})
                       .Define("aoq", aoq, {"Implant"})
                       .Define("zet", zet, {"Implant"})
                       .Define("pid", pid, {"Implant"})
                       .Define("geE", geEFunction, {"Implant"})
-                      .Define("geT", geTFunction, {"Implant"});
+                      .Define("geT", geTFunction, {"Implant"})
+                      .Define("geCrystal", geCrystalIdFunction, {"Implant"})
+                      .Define("geDetector", geDetectorIdFunction, {"Implant"});
 
-    output.Snapshot("tree", output_file_name, {"aoq", "zet", "pid", "geE", "geT"});
+    // save new branches to output_file_name tree
+    output.Snapshot("tree", output_file_name, {"aoq", "zet", "pid", "geE", "geT", "geCrystal", "geDetector"});
 
     // Fill the histogram
     auto hist_pid = output.Histo2D({"PID", "PID", 200, 2.5, 2.8, 200, 40, 65}, "aoq", "zet");
 
+    // Gamma-Gamma histograms
+    TH2F hGG("gg", "gg", 3000, 0, 3000, 3000, 0, 3000);
+    // Function to fill a gamma-gamma histogram
+    const auto fillGammaGammaFunction = [&hGG](const eurica::ImplantData &input)
+    {
+        const auto &gamma_vec = input.input_.output_vec_;
+        for (const auto &gamma : gamma_vec)
+        {
+            const auto &singles = gamma.singles_;
+            for (const auto &hit1 : singles)
+            {
+                for (const auto &hit2 : singles)
+                {
+                    if (hit1.det_id_ == hit2.det_id_)
+                        continue;
+                    hGG.Fill(hit1.energy_, hit2.energy_);
+                }
+            }
+        }
+        return;
+    };
+    output.Foreach(fillGammaGammaFunction, {"Implant"});
+
     TFile output_file(output_file_name.c_str(), "UPDATE");
     hist_pid->Write();
+    hGG.Write();
     output_file.Close();
     return 0;
 }
